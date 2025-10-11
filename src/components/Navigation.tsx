@@ -1,11 +1,27 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import csemLogo from "@/assets/csem-logo.jpg";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   const navItems = [
     { name: "Accueil", path: "/" },
@@ -40,11 +56,30 @@ export const Navigation = () => {
                 </Button>
               </Link>
             ))}
-            <Link to="/login">
-              <Button variant="hero" className="ml-4">
-                Connexion
-              </Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="ml-4">
+                    <User className="h-5 w-5 mr-2" />
+                    Mon Compte
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Se déconnecter
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/auth">
+                <Button variant="hero" className="ml-4">
+                  Connexion
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -64,16 +99,23 @@ export const Navigation = () => {
               {navItems.map((item) => (
                 <Link key={item.path} to={item.path} onClick={() => setIsOpen(false)}>
                   <Button variant="ghost" className="w-full justify-start text-foreground">
-                    {item.name}
-                  </Button>
-                </Link>
-              ))}
-              <Link to="/login" onClick={() => setIsOpen(false)}>
+                  {item.name}
+                </Button>
+              </Link>
+            ))}
+            {user ? (
+              <Button variant="hero" className="w-full mt-2" onClick={handleSignOut}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Se déconnecter
+              </Button>
+            ) : (
+              <Link to="/auth" onClick={() => setIsOpen(false)}>
                 <Button variant="hero" className="w-full mt-2">
                   Connexion
                 </Button>
               </Link>
-            </div>
+            )}
+          </div>
           </div>
         )}
       </div>
