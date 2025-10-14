@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      article_reviews: {
+        Row: {
+          abstract: string
+          authors: string
+          created_at: string
+          decision_notes: string | null
+          id: string
+          pdf_url: string | null
+          review_notes: string | null
+          reviewer_id: string | null
+          status: string
+          submission_date: string
+          submitter_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          abstract: string
+          authors: string
+          created_at?: string
+          decision_notes?: string | null
+          id?: string
+          pdf_url?: string | null
+          review_notes?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submission_date?: string
+          submitter_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          abstract?: string
+          authors?: string
+          created_at?: string
+          decision_notes?: string | null
+          id?: string
+          pdf_url?: string | null
+          review_notes?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submission_date?: string
+          submitter_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_reviews_submitter_id_fkey"
+            columns: ["submitter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

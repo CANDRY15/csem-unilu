@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, User, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, User, LayoutDashboard, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import {
@@ -32,6 +32,7 @@ export const Navigation = () => {
     { name: "Événements", path: "/events" },
     { name: "Équipe", path: "/team" },
     { name: "Contact", path: "/contact" },
+    { name: "Soumettre un article", path: "/article-review" },
   ];
 
   return (
@@ -70,9 +71,21 @@ export const Navigation = () => {
                   <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {canPublish && (
-                    <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Tableau de bord
+                    <>
+                      <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Tableau de bord
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/my-submissions")}>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Mes soumissions
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {!canPublish && (
+                    <DropdownMenuItem onClick={() => navigate("/my-submissions")}>
+                      <FileText className="mr-2 h-4 w-4" />
+                      Mes soumissions
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem onClick={handleSignOut}>

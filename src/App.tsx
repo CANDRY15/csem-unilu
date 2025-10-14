@@ -11,6 +11,8 @@ import Team from "./pages/Team";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import ArticleReview from "./pages/ArticleReview";
+import MySubmissions from "./pages/MySubmissions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +32,8 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/article-review" element={<ArticleReview />} />
+          <Route path="/my-submissions" element={<MySubmissions />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
