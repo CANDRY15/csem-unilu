@@ -1,54 +1,37 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Linkedin } from "lucide-react";
+import { Mail, Linkedin, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Team = () => {
-  const leadership = [
-    {
-      name: "Dr. Jean Kabamba",
-      role: "Président CSEM",
-      specialty: "Chirurgie Générale",
-    },
-    {
-      name: "Marie Tshilombo",
-      role: "Vice-Présidente",
-      specialty: "Médecine Interne",
-    },
-    {
-      name: "David Mukendi",
-      role: "Secrétaire Général",
-      specialty: "Pédiatrie",
-    },
-    {
-      name: "Sarah Mbuyi",
-      role: "Trésorière",
-      specialty: "Gynécologie",
-    },
-  ];
+  const { data: leadership, isLoading: loadingLeadership } = useQuery({
+    queryKey: ["comite-central"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("comite_central")
+        .select("*")
+        .order("ordre", { ascending: true });
 
-  const departments = [
-    {
-      name: "Département Recherche",
-      head: "Dr. Paul Kasongo",
-      members: 15,
+      if (error) throw error;
+      return data;
     },
-    {
-      name: "Département Publications",
-      head: "Marie Kalala",
-      members: 12,
+  });
+
+  const { data: departments, isLoading: loadingDepartments } = useQuery({
+    queryKey: ["departements"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("departements")
+        .select("*")
+        .order("ordre", { ascending: true });
+
+      if (error) throw error;
+      return data;
     },
-    {
-      name: "Département Événements",
-      head: "Joseph Mwamba",
-      members: 20,
-    },
-    {
-      name: "Département Communication",
-      head: "Grace Ngoy",
-      members: 10,
-    },
-  ];
+  });
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -69,60 +52,122 @@ const Team = () => {
 
         {/* Leadership Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Bureau Exécutif</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {leadership.map((member, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-brand transition-all duration-300 hover:-translate-y-1"
-              >
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className="h-24 w-24 mx-auto rounded-full bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center text-3xl font-bold text-primary-foreground">
-                    {member.name.split(" ")[0][0]}
-                    {member.name.split(" ")[1][0]}
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold">{member.name}</h3>
-                    <p className="text-primary font-medium">{member.role}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{member.specialty}</p>
-                  </div>
-                  <div className="flex gap-2 justify-center pt-2">
-                    <button className="p-2 rounded-lg hover:bg-primary/10 transition-colors">
-                      <Mail className="h-5 w-5 text-primary" />
-                    </button>
-                    <button className="p-2 rounded-lg hover:bg-secondary/10 transition-colors">
-                      <Linkedin className="h-5 w-5 text-secondary" />
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <h2 className="text-3xl font-bold mb-8 text-center">Comité Central 2025-2026</h2>
+          {loadingLeadership ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardContent className="p-6 text-center space-y-4">
+                    <Skeleton className="h-24 w-24 mx-auto rounded-full" />
+                    <Skeleton className="h-6 w-32 mx-auto" />
+                    <Skeleton className="h-4 w-24 mx-auto" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {leadership?.map((member) => (
+                <Card
+                  key={member.id}
+                  className="hover:shadow-brand transition-all duration-300 hover:-translate-y-1"
+                >
+                  <CardContent className="p-6 text-center space-y-4">
+                    {member.photo ? (
+                      <img
+                        src={member.photo}
+                        alt={member.nom}
+                        className="h-24 w-24 mx-auto rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-24 w-24 mx-auto rounded-full bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center text-3xl font-bold text-primary-foreground">
+                        {member.nom.split(" ")[0]?.[0]}
+                        {member.nom.split(" ")[member.nom.split(" ").length - 1]?.[0]}
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="text-xl font-semibold">{member.nom}</h3>
+                      <p className="text-primary font-medium">{member.fonction}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{member.niveau}</p>
+                    </div>
+                    {member.description && (
+                      <p className="text-sm text-muted-foreground">{member.description}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Departments Section */}
         <section>
           <h2 className="text-3xl font-bold mb-8 text-center">Départements</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {departments.map((dept, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold">{dept.name}</h3>
-                      <p className="text-muted-foreground">Chef: {dept.head}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                        {dept.members}
+          {loadingDepartments ? (
+            <div className="grid md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <Skeleton className="h-6 w-full mb-4" />
+                    <Skeleton className="h-4 w-2/3 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6">
+              {departments?.map((dept) => (
+                <Card key={dept.id} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold mb-3">{dept.nom}</h3>
+                        
+                        {dept.directeur_nom && (
+                          <div className="mb-2">
+                            <p className="text-sm font-medium text-muted-foreground">Directeur</p>
+                            <p className="text-base">
+                              {dept.directeur_nom}
+                              {dept.directeur_niveau && (
+                                <span className="text-sm text-primary ml-2">({dept.directeur_niveau})</span>
+                              )}
+                            </p>
+                          </div>
+                        )}
+                        
+                        {dept.vice_nom && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Vice-directeur</p>
+                            <p className="text-base">
+                              {dept.vice_nom}
+                              {dept.vice_niveau && (
+                                <span className="text-sm text-primary ml-2">({dept.vice_niveau})</span>
+                              )}
+                            </p>
+                          </div>
+                        )}
+                        
+                        {dept.description && (
+                          <p className="text-sm text-muted-foreground mt-3">{dept.description}</p>
+                        )}
                       </div>
-                      <p className="text-sm text-muted-foreground">membres</p>
+                      
+                      {dept.membres_count > 0 && (
+                        <div className="text-right ml-4">
+                          <div className="flex items-center gap-2 text-primary">
+                            <Users className="h-5 w-5" />
+                            <span className="text-2xl font-bold">{dept.membres_count}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">membres</p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Join CTA */}

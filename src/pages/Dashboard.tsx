@@ -10,11 +10,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
-import { Loader2, Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, FileText, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { OrganizationManagement } from "@/components/OrganizationManagement";
 
 interface Publication {
   id: string;
@@ -32,6 +35,7 @@ interface Publication {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { isAdmin } = useUserRole();
   const [publications, setPublications] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -165,13 +169,29 @@ const Dashboard = () => {
     <div className="min-h-screen flex flex-col">
       <Navigation />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              Tableau de bord
-            </h1>
-            <p className="text-muted-foreground mt-2">Gérez vos publications</p>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            Tableau de bord
+          </h1>
+          <p className="text-muted-foreground mt-2">Gérez vos publications et l'organisation</p>
+        </div>
+
+        <Tabs defaultValue="publications" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="publications">
+              <FileText className="h-4 w-4 mr-2" />
+              Publications
+            </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="organization">
+                <Users className="h-4 w-4 mr-2" />
+                Organisation
+              </TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="publications" className="space-y-6">
+            <div className="flex justify-between items-center">
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
             if (!open) resetForm();
@@ -349,7 +369,15 @@ const Dashboard = () => {
               </TableBody>
             </Table>
           </CardContent>
-        </Card>
+            </Card>
+          </TabsContent>
+
+          {isAdmin && (
+            <TabsContent value="organization">
+              <OrganizationManagement />
+            </TabsContent>
+          )}
+        </Tabs>
       </main>
       <Footer />
     </div>

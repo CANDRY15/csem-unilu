@@ -77,6 +77,87 @@ export type Database = {
           },
         ]
       }
+      comite_central: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          fonction: string
+          id: string
+          niveau: string
+          nom: string
+          ordre: number | null
+          photo: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          fonction: string
+          id?: string
+          niveau: string
+          nom: string
+          ordre?: number | null
+          photo?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          fonction?: string
+          id?: string
+          niveau?: string
+          nom?: string
+          ordre?: number | null
+          photo?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      departements: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          directeur_niveau: string | null
+          directeur_nom: string | null
+          id: string
+          membres_count: number | null
+          nom: string
+          ordre: number | null
+          photo: string | null
+          updated_at: string | null
+          vice_niveau: string | null
+          vice_nom: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          directeur_niveau?: string | null
+          directeur_nom?: string | null
+          id?: string
+          membres_count?: number | null
+          nom: string
+          ordre?: number | null
+          photo?: string | null
+          updated_at?: string | null
+          vice_niveau?: string | null
+          vice_nom?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          directeur_niveau?: string | null
+          directeur_nom?: string | null
+          id?: string
+          membres_count?: number | null
+          nom?: string
+          ordre?: number | null
+          photo?: string | null
+          updated_at?: string | null
+          vice_niveau?: string | null
+          vice_nom?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
