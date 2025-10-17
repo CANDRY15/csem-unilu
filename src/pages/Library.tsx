@@ -4,13 +4,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, BookOpen, FileText, GraduationCap, Download } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Library = () => {
+  const { data: documents, isLoading } = useQuery({
+    queryKey: ["bibliotheque"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bibliotheque")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const categories = [
-    { name: "Thèses", count: 45, icon: GraduationCap, color: "text-primary" },
-    { name: "Travaux Pratiques", count: 78, icon: FileText, color: "text-secondary" },
-    { name: "Cours", count: 120, icon: BookOpen, color: "text-accent" },
-    { name: "Présentations", count: 56, icon: FileText, color: "text-primary" },
+    { name: "Thèses", count: documents?.filter(d => d.type === "these").length || 0, icon: GraduationCap, color: "text-primary" },
+    { name: "Travaux Pratiques", count: documents?.filter(d => d.type === "tp").length || 0, icon: FileText, color: "text-secondary" },
+    { name: "Cours", count: documents?.filter(d => d.type === "cours").length || 0, icon: BookOpen, color: "text-accent" },
+    { name: "Présentations", count: documents?.filter(d => d.type === "presentation").length || 0, icon: FileText, color: "text-primary" },
   ];
 
   return (
@@ -66,30 +81,38 @@ const Library = () => {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold">Documents Récents</h2>
           <div className="grid gap-4">
-            {[1, 2, 3, 4].map((item) => (
-              <Card key={item} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <h3 className="text-xl">Titre du Document Médical #{item}</h3>
-                      <p className="text-sm text-muted-foreground font-normal">
-                        Auteur: Étudiant Example | Promotion: 2023-2024
-                      </p>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      <Download className="h-4 w-4 mr-2" />
-                      Télécharger
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Description courte du document. Ceci est un exemple de travail académique disponible
-                    dans notre bibliothèque numérique...
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i}><CardContent className="p-6"><Skeleton className="h-20" /></CardContent></Card>
+              ))
+            ) : documents?.length === 0 ? (
+              <Card><CardContent className="p-8 text-center text-muted-foreground">Aucun document disponible</CardContent></Card>
+            ) : (
+              documents?.map((doc) => (
+                <Card key={doc.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="flex items-start justify-between">
+                      <div className="space-y-2">
+                        <h3 className="text-xl">{doc.titre}</h3>
+                        <p className="text-sm text-muted-foreground font-normal">
+                          Auteur: {doc.auteur}
+                        </p>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={() => {
+                        const url = supabase.storage.from('library-files').getPublicUrl(doc.fichier_url).data.publicUrl;
+                        window.open(url, '_blank');
+                      }}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Télécharger
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{doc.description || "Aucune description"}</p>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
 

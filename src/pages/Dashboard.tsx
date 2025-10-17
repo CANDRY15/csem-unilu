@@ -18,6 +18,8 @@ import { toast } from "sonner";
 import { Loader2, Plus, Edit, Trash2, FileText, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { OrganizationManagement } from "@/components/OrganizationManagement";
+import { DepartmentMembersManagement } from "@/components/DepartmentMembersManagement";
+import { LibraryManagement } from "@/components/LibraryManagement";
 
 interface Publication {
   id: string;
@@ -27,6 +29,9 @@ interface Publication {
   status: string;
   category: string | null;
   image_url: string | null;
+  authors: string | null;
+  pdf_url: string | null;
+  cover_image: string | null;
   created_at: string;
   published_at: string | null;
   author_id: string;
@@ -46,6 +51,9 @@ const Dashboard = () => {
     excerpt: "",
     category: "",
     image_url: "",
+    authors: "",
+    pdf_url: "",
+    cover_image: "",
     status: "draft"
   });
 
@@ -123,6 +131,9 @@ const Dashboard = () => {
       excerpt: publication.excerpt || "",
       category: publication.category || "",
       image_url: publication.image_url || "",
+      authors: publication.authors || "",
+      pdf_url: publication.pdf_url || "",
+      cover_image: publication.cover_image || "",
       status: publication.status
     });
     setIsDialogOpen(true);
@@ -152,6 +163,9 @@ const Dashboard = () => {
       excerpt: "",
       category: "",
       image_url: "",
+      authors: "",
+      pdf_url: "",
+      cover_image: "",
       status: "draft"
     });
     setEditingId(null);
@@ -183,10 +197,20 @@ const Dashboard = () => {
               Publications
             </TabsTrigger>
             {isAdmin && (
-              <TabsTrigger value="organization">
-                <Users className="h-4 w-4 mr-2" />
-                Organisation
-              </TabsTrigger>
+              <>
+                <TabsTrigger value="organization">
+                  <Users className="h-4 w-4 mr-2" />
+                  Organisation
+                </TabsTrigger>
+                <TabsTrigger value="department-members">
+                  <Users className="h-4 w-4 mr-2" />
+                  Membres Depts
+                </TabsTrigger>
+                <TabsTrigger value="library">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Bibliothèque
+                </TabsTrigger>
+              </>
             )}
           </TabsList>
 
@@ -240,6 +264,15 @@ const Dashboard = () => {
                     required
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authors">Auteurs</Label>
+                  <Input
+                    id="authors"
+                    value={formData.authors}
+                    onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
+                    placeholder="Ex: Dr. Jean Dupont, Prof. Marie Martin"
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="category">Catégorie</Label>
@@ -273,6 +306,26 @@ const Dashboard = () => {
                     type="url"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    placeholder="https://..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cover_image">URL de la couverture</Label>
+                  <Input
+                    id="cover_image"
+                    type="url"
+                    value={formData.cover_image}
+                    onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
+                    placeholder="https://..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="pdf_url">URL du PDF</Label>
+                  <Input
+                    id="pdf_url"
+                    type="url"
+                    value={formData.pdf_url}
+                    onChange={(e) => setFormData({ ...formData, pdf_url: e.target.value })}
                     placeholder="https://..."
                   />
                 </div>
@@ -373,9 +426,19 @@ const Dashboard = () => {
           </TabsContent>
 
           {isAdmin && (
-            <TabsContent value="organization">
-              <OrganizationManagement />
-            </TabsContent>
+            <>
+              <TabsContent value="organization">
+                <OrganizationManagement />
+              </TabsContent>
+              
+              <TabsContent value="department-members">
+                <DepartmentMembersManagement />
+              </TabsContent>
+              
+              <TabsContent value="library">
+                <LibraryManagement />
+              </TabsContent>
+            </>
           )}
         </Tabs>
       </main>

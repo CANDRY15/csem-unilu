@@ -33,6 +33,7 @@ type ComiteMember = {
   photo?: string;
   description?: string;
   ordre: number;
+  contact?: string;
 };
 
 type Department = {
@@ -44,6 +45,7 @@ type Department = {
   vice_nom?: string;
   vice_niveau?: string;
   photo?: string;
+  logo?: string;
   membres_count: number;
   ordre: number;
 };
@@ -160,24 +162,61 @@ export function OrganizationManagement() {
     },
   });
 
-  const handleComiteSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleComiteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    
+    let photoUrl = editingComite?.photo;
+    const photoFile = (formData.get("photo") as File);
+    
+    if (photoFile && photoFile.size > 0) {
+      const fileExt = photoFile.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('member-photos')
+        .upload(fileName, photoFile);
+      
+      if (error) {
+        toast({ title: "Échec du téléchargement de la photo", variant: "destructive" });
+        return;
+      }
+      photoUrl = supabase.storage.from('member-photos').getPublicUrl(data.path).data.publicUrl;
+    }
+    
     const member = {
       id: editingComite?.id,
       nom: formData.get("nom") as string,
       fonction: formData.get("fonction") as string,
       niveau: formData.get("niveau") as string,
-      photo: formData.get("photo") as string || null,
+      contact: formData.get("contact") as string || null,
+      photo: photoUrl || null,
       description: formData.get("description") as string || null,
       ordre: parseInt(formData.get("ordre") as string) || 0,
     };
     saveComiteMutation.mutate(member);
   };
 
-  const handleDeptSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDeptSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    
+    let logoUrl = editingDept?.logo;
+    const logoFile = (formData.get("logo") as File);
+    
+    if (logoFile && logoFile.size > 0) {
+      const fileExt = logoFile.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('department-logos')
+        .upload(fileName, logoFile);
+      
+      if (error) {
+        toast({ title: "Échec du téléchargement du logo", variant: "destructive" });
+        return;
+      }
+      logoUrl = supabase.storage.from('department-logos').getPublicUrl(data.path).data.publicUrl;
+    }
+    
     const dept = {
       id: editingDept?.id,
       nom: formData.get("nom") as string,
@@ -187,6 +226,7 @@ export function OrganizationManagement() {
       vice_nom: formData.get("vice_nom") as string || null,
       vice_niveau: formData.get("vice_niveau") as string || null,
       photo: formData.get("photo") as string || null,
+      logo: logoUrl || null,
       membres_count: parseInt(formData.get("membres_count") as string) || 0,
       ordre: parseInt(formData.get("ordre") as string) || 0,
     };
@@ -256,6 +296,14 @@ export function OrganizationManagement() {
                         />
                       </div>
                       <div>
+                        <Label htmlFor="contact">Contact</Label>
+                        <Input
+                          id="contact"
+                          name="contact"
+                          defaultValue={editingComite?.contact}
+                        />
+                      </div>
+                      <div>
                         <Label htmlFor="ordre">Ordre d'affichage</Label>
                         <Input
                           id="ordre"
@@ -266,13 +314,16 @@ export function OrganizationManagement() {
                       </div>
                     </div>
                     <div>
-                      <Label htmlFor="photo">URL Photo</Label>
+                      <Label htmlFor="photo">Photo</Label>
                       <Input
                         id="photo"
                         name="photo"
-                        type="url"
-                        defaultValue={editingComite?.photo}
+                        type="file"
+                        accept="image/*"
                       />
+                      {editingComite?.photo && (
+                        <p className="text-xs text-muted-foreground mt-1">Photo actuelle disponible</p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="description">Description</Label>
@@ -297,6 +348,7 @@ export function OrganizationManagement() {
                   <TableHead>Nom</TableHead>
                   <TableHead>Fonction</TableHead>
                   <TableHead>Niveau</TableHead>
+                  <TableHead>Contact</TableHead>
                   <TableHead>Ordre</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -307,6 +359,7 @@ export function OrganizationManagement() {
                     <TableCell className="font-medium">{member.nom}</TableCell>
                     <TableCell>{member.fonction}</TableCell>
                     <TableCell>{member.niveau}</TableCell>
+                    <TableCell>{member.contact || "-"}</TableCell>
                     <TableCell>{member.ordre}</TableCell>
                     <TableCell className="text-right space-x-2">
                       <Button
@@ -427,6 +480,18 @@ export function OrganizationManagement() {
                         type="url"
                         defaultValue={editingDept?.photo}
                       />
+                    </div>
+                    <div>
+                      <Label htmlFor="logo">Logo du département</Label>
+                      <Input
+                        id="logo"
+                        name="logo"
+                        type="file"
+                        accept="image/*"
+                      />
+                      {editingDept?.logo && (
+                        <p className="text-xs text-muted-foreground mt-1">Logo actuel disponible</p>
+                      )}
                     </div>
                     <Button type="submit" className="w-full">
                       Sauvegarder

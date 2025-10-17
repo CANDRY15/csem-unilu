@@ -77,8 +77,48 @@ export type Database = {
           },
         ]
       }
+      bibliotheque: {
+        Row: {
+          auteur: string
+          created_at: string | null
+          date_publication: string | null
+          description: string | null
+          fichier_url: string
+          id: string
+          image_url: string | null
+          titre: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          auteur: string
+          created_at?: string | null
+          date_publication?: string | null
+          description?: string | null
+          fichier_url: string
+          id?: string
+          image_url?: string | null
+          titre: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          auteur?: string
+          created_at?: string | null
+          date_publication?: string | null
+          description?: string | null
+          fichier_url?: string
+          id?: string
+          image_url?: string | null
+          titre?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       comite_central: {
         Row: {
+          contact: string | null
           created_at: string | null
           description: string | null
           fonction: string
@@ -90,6 +130,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          contact?: string | null
           created_at?: string | null
           description?: string | null
           fonction: string
@@ -101,6 +142,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          contact?: string | null
           created_at?: string | null
           description?: string | null
           fonction?: string
@@ -120,6 +162,7 @@ export type Database = {
           directeur_niveau: string | null
           directeur_nom: string | null
           id: string
+          logo: string | null
           membres_count: number | null
           nom: string
           ordre: number | null
@@ -134,6 +177,7 @@ export type Database = {
           directeur_niveau?: string | null
           directeur_nom?: string | null
           id?: string
+          logo?: string | null
           membres_count?: number | null
           nom: string
           ordre?: number | null
@@ -148,6 +192,7 @@ export type Database = {
           directeur_niveau?: string | null
           directeur_nom?: string | null
           id?: string
+          logo?: string | null
           membres_count?: number | null
           nom?: string
           ordre?: number | null
@@ -157,6 +202,56 @@ export type Database = {
           vice_nom?: string | null
         }
         Relationships: []
+      }
+      membres_departement: {
+        Row: {
+          bio: string | null
+          contact: string | null
+          created_at: string | null
+          departement_id: string | null
+          fonction: string
+          id: string
+          niveau: string | null
+          nom: string
+          ordre: number | null
+          photo: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bio?: string | null
+          contact?: string | null
+          created_at?: string | null
+          departement_id?: string | null
+          fonction: string
+          id?: string
+          niveau?: string | null
+          nom: string
+          ordre?: number | null
+          photo?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bio?: string | null
+          contact?: string | null
+          created_at?: string | null
+          departement_id?: string | null
+          fonction?: string
+          id?: string
+          niveau?: string | null
+          nom?: string
+          ordre?: number | null
+          photo?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membres_departement_departement_id_fkey"
+            columns: ["departement_id"]
+            isOneToOne: false
+            referencedRelation: "departements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -188,12 +283,15 @@ export type Database = {
       publications: {
         Row: {
           author_id: string
+          authors: string | null
           category: string | null
           content: string
+          cover_image: string | null
           created_at: string
           excerpt: string | null
           id: string
           image_url: string | null
+          pdf_url: string | null
           published_at: string | null
           status: string
           title: string
@@ -201,12 +299,15 @@ export type Database = {
         }
         Insert: {
           author_id: string
+          authors?: string | null
           category?: string | null
           content: string
+          cover_image?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
           image_url?: string | null
+          pdf_url?: string | null
           published_at?: string | null
           status?: string
           title: string
@@ -214,12 +315,15 @@ export type Database = {
         }
         Update: {
           author_id?: string
+          authors?: string | null
           category?: string | null
           content?: string
+          cover_image?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
           image_url?: string | null
+          pdf_url?: string | null
           published_at?: string | null
           status?: string
           title?: string
