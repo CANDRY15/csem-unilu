@@ -221,13 +221,9 @@ export function OrganizationManagement() {
       id: editingDept?.id,
       nom: formData.get("nom") as string,
       description: formData.get("description") as string || null,
-      directeur_nom: formData.get("directeur_nom") as string || null,
-      directeur_niveau: formData.get("directeur_niveau") as string || null,
-      vice_nom: formData.get("vice_nom") as string || null,
-      vice_niveau: formData.get("vice_niveau") as string || null,
       photo: formData.get("photo") as string || null,
       logo: logoUrl || null,
-      membres_count: parseInt(formData.get("membres_count") as string) || 0,
+      membres_count: 0,
       ordre: parseInt(formData.get("ordre") as string) || 0,
     };
     saveDeptMutation.mutate(dept);
@@ -412,7 +408,7 @@ export function OrganizationManagement() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="description">Description</Label>
+                      <Label htmlFor="description">Description / Coordonnées</Label>
                       <Textarea
                         id="description"
                         name="description"
@@ -421,47 +417,6 @@ export function OrganizationManagement() {
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="directeur_nom">Directeur</Label>
-                        <Input
-                          id="directeur_nom"
-                          name="directeur_nom"
-                          defaultValue={editingDept?.directeur_nom}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="directeur_niveau">Niveau directeur</Label>
-                        <Input
-                          id="directeur_niveau"
-                          name="directeur_niveau"
-                          defaultValue={editingDept?.directeur_niveau}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="vice_nom">Vice-directeur</Label>
-                        <Input
-                          id="vice_nom"
-                          name="vice_nom"
-                          defaultValue={editingDept?.vice_nom}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="vice_niveau">Niveau vice-directeur</Label>
-                        <Input
-                          id="vice_niveau"
-                          name="vice_niveau"
-                          defaultValue={editingDept?.vice_niveau}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="membres_count">Nombre de membres</Label>
-                        <Input
-                          id="membres_count"
-                          name="membres_count"
-                          type="number"
-                          defaultValue={editingDept?.membres_count || 0}
-                        />
-                      </div>
                       <div>
                         <Label htmlFor="ordre">Ordre d'affichage</Label>
                         <Input
@@ -472,31 +427,31 @@ export function OrganizationManagement() {
                         />
                       </div>
                     </div>
-                    <div>
-                      <Label htmlFor="photo">URL Photo</Label>
-                      <Input
-                        id="photo"
-                        name="photo"
-                        type="url"
-                        defaultValue={editingDept?.photo}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="logo">Logo du département</Label>
-                      <Input
-                        id="logo"
-                        name="logo"
-                        type="file"
-                        accept="image/*"
-                      />
-                      {editingDept?.logo && (
-                        <p className="text-xs text-muted-foreground mt-1">Logo actuel disponible</p>
-                      )}
-                    </div>
-                    <Button type="submit" className="w-full">
-                      Sauvegarder
-                    </Button>
-                  </form>
+                     <div>
+                       <Label htmlFor="photo">URL Photo</Label>
+                       <Input
+                         id="photo"
+                         name="photo"
+                         type="url"
+                         defaultValue={editingDept?.photo}
+                       />
+                     </div>
+                     <div>
+                       <Label htmlFor="logo">Logo du département</Label>
+                       <Input
+                         id="logo"
+                         name="logo"
+                         type="file"
+                         accept="image/*"
+                       />
+                       {editingDept?.logo && (
+                         <p className="text-xs text-muted-foreground mt-1">Logo actuel disponible</p>
+                       )}
+                     </div>
+                     <Button type="submit" className="w-full">
+                       Sauvegarder
+                     </Button>
+                   </form>
                 </DialogContent>
               </Dialog>
             </div>
@@ -505,8 +460,8 @@ export function OrganizationManagement() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Nom</TableHead>
-                  <TableHead>Directeur</TableHead>
-                  <TableHead>Vice-directeur</TableHead>
+                  <TableHead>Logo</TableHead>
+                  <TableHead>Description</TableHead>
                   <TableHead>Membres</TableHead>
                   <TableHead>Ordre</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -517,14 +472,18 @@ export function OrganizationManagement() {
                   <TableRow key={dept.id}>
                     <TableCell className="font-medium">{dept.nom}</TableCell>
                     <TableCell>
-                      {dept.directeur_nom}
-                      {dept.directeur_niveau && ` (${dept.directeur_niveau})`}
+                      {dept.logo ? (
+                        <img
+                          src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/department-logos/${dept.logo}`}
+                          alt={dept.nom}
+                          className="h-10 w-10 object-contain"
+                        />
+                      ) : (
+                        "-"
+                      )}
                     </TableCell>
-                    <TableCell>
-                      {dept.vice_nom}
-                      {dept.vice_niveau && ` (${dept.vice_niveau})`}
-                    </TableCell>
-                    <TableCell>{dept.membres_count}</TableCell>
+                    <TableCell className="max-w-xs truncate">{dept.description || "-"}</TableCell>
+                    <TableCell>{dept.membres_count || 0}</TableCell>
                     <TableCell>{dept.ordre}</TableCell>
                     <TableCell className="text-right space-x-2">
                       <Button
