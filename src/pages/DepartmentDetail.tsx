@@ -123,9 +123,13 @@ export default function DepartmentDetail() {
                           <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-primary/20 shadow-brand">
                             {member.photo ? (
                               <img
-                                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/member-photos/${member.photo}`}
+                                src={`https://ozegzzvoinvluvilztra.supabase.co/storage/v1/object/public/member-photos/${member.photo}`}
                                 alt={member.nom}
                                 className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  e.currentTarget.parentElement!.innerHTML = `<div class="w-full h-full bg-gradient-brand flex items-center justify-center text-white text-5xl font-bold">${member.nom.charAt(0)}</div>`;
+                                }}
                               />
                             ) : (
                               <div className="w-full h-full bg-gradient-brand flex items-center justify-center text-white text-5xl font-bold">

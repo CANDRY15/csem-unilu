@@ -93,9 +93,13 @@ export default function Team() {
                           <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-primary/20 shadow-brand">
                             {member.photo ? (
                               <img
-                                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/member-photos/${member.photo}`}
+                                src={`https://ozegzzvoinvluvilztra.supabase.co/storage/v1/object/public/member-photos/${member.photo}`}
                                 alt={member.nom}
                                 className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  e.currentTarget.parentElement!.innerHTML = `<div class="w-full h-full bg-gradient-brand flex items-center justify-center text-white text-5xl font-bold">${member.nom.charAt(0)}</div>`;
+                                }}
                               />
                             ) : (
                               <div className="w-full h-full bg-gradient-brand flex items-center justify-center text-white text-5xl font-bold">
@@ -174,32 +178,53 @@ export default function Team() {
                 ))}
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 {departments?.map((dept) => (
                   <Link key={dept.id} to={`/team/department/${dept.id}`}>
-                    <Card className="overflow-hidden hover:shadow-brand transition-all h-full group cursor-pointer">
-                      <div className="p-6 text-center">
-                        {dept.logo && (
-                          <div className="mb-4">
-                            <img
-                              src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/department-logos/${dept.logo}`}
-                              alt={dept.nom}
-                              className="h-20 w-20 object-contain mx-auto group-hover:scale-110 transition-transform"
-                            />
-                          </div>
-                        )}
-                        <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">{dept.nom}</h3>
-                        {dept.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-3">{dept.description}</p>
-                        )}
-                        {dept.membres_count > 0 && (
-                          <p className="text-sm font-semibold text-primary mt-4">
-                            {dept.membres_count} membre{dept.membres_count > 1 ? 's' : ''}
-                          </p>
-                        )}
-                        <Button variant="ghost" className="mt-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                          Voir les membres
-                        </Button>
+                    <Card className="overflow-hidden hover:shadow-brand transition-all h-full group cursor-pointer border-2 border-transparent hover:border-primary/20">
+                      <div className="p-8">
+                        <div className="flex flex-col items-center text-center space-y-6">
+                          {/* Logo */}
+                          {dept.logo && (
+                            <div className="w-24 h-24 flex items-center justify-center">
+                              <img
+                                src={`https://ozegzzvoinvluvilztra.supabase.co/storage/v1/object/public/department-logos/${dept.logo}`}
+                                alt={dept.nom}
+                                className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Nom du département */}
+                          <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
+                            {dept.nom}
+                          </h3>
+                          
+                          {/* Description/Coordonnées */}
+                          {dept.description && (
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {dept.description}
+                            </p>
+                          )}
+                          
+                          {/* Nombre de membres */}
+                          {dept.membres_count > 0 && (
+                            <p className="text-sm font-semibold text-primary">
+                              {dept.membres_count} membre{dept.membres_count > 1 ? 's' : ''}
+                            </p>
+                          )}
+                          
+                          {/* Bouton */}
+                          <Button 
+                            variant="outline" 
+                            className="mt-2 group-hover:bg-primary group-hover:text-primary-foreground transition-colors w-full"
+                          >
+                            Voir les membres
+                          </Button>
+                        </div>
                       </div>
                     </Card>
                   </Link>
