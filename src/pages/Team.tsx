@@ -93,7 +93,7 @@ export default function Team() {
                           <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-primary/20 shadow-brand">
                             {member.photo ? (
                               <img
-                                src={`https://ozegzzvoinvluvilztra.supabase.co/storage/v1/object/public/member-photos/${member.photo}`}
+                                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/member-photos/${member.photo}`}
                                 alt={member.nom}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
@@ -185,10 +185,10 @@ export default function Team() {
                       <div className="p-8">
                         <div className="flex flex-col items-center text-center space-y-6">
                           {/* Logo */}
-                          {dept.logo && (
+                            {dept.logo && (
                             <div className="w-24 h-24 flex items-center justify-center">
                               <img
-                                src={`https://ozegzzvoinvluvilztra.supabase.co/storage/v1/object/public/department-logos/${dept.logo}`}
+                                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/department-logos/${dept.logo}`}
                                 alt={dept.nom}
                                 className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform"
                                 onError={(e) => {
