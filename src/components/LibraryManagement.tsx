@@ -84,23 +84,7 @@ export function LibraryManagement() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
-    let fichierUrl = editingItem?.fichier_url;
     let imageUrl = editingItem?.image_url;
-    
-    const fichierFile = (formData.get("fichier") as File);
-    if (fichierFile && fichierFile.size > 0) {
-      const fileExt = fichierFile.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const { data, error } = await supabase.storage
-        .from('library-files')
-        .upload(fileName, fichierFile);
-      
-      if (error) {
-        toast({ title: "Erreur", description: "Échec du téléchargement du fichier", variant: "destructive" });
-        return;
-      }
-      fichierUrl = data.path;
-    }
     
     const imageFile = (formData.get("image") as File);
     if (imageFile && imageFile.size > 0) {
@@ -117,8 +101,9 @@ export function LibraryManagement() {
       imageUrl = data.path;
     }
 
+    const fichierUrl = formData.get("fichier") as string;
     if (!fichierUrl) {
-      toast({ title: "Erreur", description: "Le fichier est requis", variant: "destructive" });
+      toast({ title: "Erreur", description: "Le lien Drive est requis", variant: "destructive" });
       return;
     }
 
@@ -183,11 +168,9 @@ export function LibraryManagement() {
                 <Textarea name="description" defaultValue={editingItem?.description} rows={3} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="fichier">Fichier (PDF) *</Label>
-                <Input name="fichier" type="file" accept=".pdf" />
-                {editingItem?.fichier_url && (
-                  <p className="text-sm text-muted-foreground">Fichier actuel: {editingItem.fichier_url}</p>
-                )}
+                <Label htmlFor="fichier">Lien Google Drive du document *</Label>
+                <Input name="fichier" type="url" placeholder="https://drive.google.com/..." defaultValue={editingItem?.fichier_url} required />
+                <p className="text-xs text-muted-foreground">Collez le lien de partage Google Drive du document</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="image">Image de couverture</Label>

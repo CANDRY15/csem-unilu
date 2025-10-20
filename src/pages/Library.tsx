@@ -77,40 +77,57 @@ const Library = () => {
           ))}
         </div>
 
-        {/* Recent Documents */}
+        {/* Documents Grid */}
         <div className="space-y-6">
           <h2 className="text-3xl font-bold">Documents Récents</h2>
-          <div className="grid gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <Card key={i}><CardContent className="p-6"><Skeleton className="h-20" /></CardContent></Card>
+              Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
               ))
             ) : documents?.length === 0 ? (
-              <Card><CardContent className="p-8 text-center text-muted-foreground">Aucun document disponible</CardContent></Card>
+              <div className="col-span-full">
+                <Card><CardContent className="p-8 text-center text-muted-foreground">Aucun document disponible</CardContent></Card>
+              </div>
             ) : (
               documents?.map((doc) => (
-                <Card key={doc.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-start justify-between">
-                      <div className="space-y-2">
-                        <h3 className="text-xl">{doc.titre}</h3>
-                        <p className="text-sm text-muted-foreground font-normal">
-                          Auteur: {doc.auteur}
-                        </p>
+                <div key={doc.id} className="group cursor-pointer space-y-3">
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-lg hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
+                    {doc.image_url ? (
+                      <img
+                        src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/library-files/${doc.image_url}`}
+                        alt={doc.titre}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://placehold.co/400x600/1a1a1a/white?text=' + encodeURIComponent(doc.titre);
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center p-4">
+                        <p className="text-center font-bold text-lg">{doc.titre}</p>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => {
-                        const url = supabase.storage.from('library-files').getPublicUrl(doc.fichier_url).data.publicUrl;
-                        window.open(url, '_blank');
-                      }}>
+                    )}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => window.open(doc.fichier_url, '_blank')}
+                      >
                         <Download className="h-4 w-4 mr-2" />
                         Télécharger
                       </Button>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{doc.description || "Aucune description"}</p>
-                  </CardContent>
-                </Card>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                      {doc.titre}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">{doc.auteur}</p>
+                  </div>
+                </div>
               ))
             )}
           </div>
