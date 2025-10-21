@@ -1,11 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Calendar, Users, Microscope, GraduationCap, Award } from "lucide-react";
+import { BookOpen, Calendar, Users, Microscope, GraduationCap, Award, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
+  const { data: featuredPublications } = useQuery({
+    queryKey: ["featured-publications"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("publications")
+        .select("*")
+        .eq("status", "published")
+        .eq("featured", true)
+        .order("published_at", { ascending: false })
+        .limit(4);
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const features = [
     {
       icon: BookOpen,
@@ -135,6 +152,63 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Featured Publications */}
+      {featuredPublications && featuredPublications.length > 0 && (
+        <section className="py-20 px-4">
+          <div className="container mx-auto">
+            <div className="text-center space-y-4 mb-12">
+              <h2 className="text-4xl font-bold">À la Une</h2>
+              <p className="text-lg text-muted-foreground">
+                Nos dernières publications et événements en vedette
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredPublications.map((pub) => (
+                <div key={pub.id} className="group cursor-pointer space-y-3">
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-lg hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
+                    {pub.cover_image ? (
+                      <img
+                        src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/publication-files/${pub.cover_image}`}
+                        alt={pub.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://placehold.co/400x600/1a1a1a/white?text=' + encodeURIComponent(pub.title);
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center p-4">
+                        <p className="text-center font-bold text-lg">{pub.title}</p>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      {pub.pdf_url && (
+                        <Button 
+                          variant="secondary" 
+                          size="sm"
+                          onClick={() => window.open(pub.pdf_url, '_blank')}
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Télécharger
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                      {pub.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">{pub.authors || "CSEM"}</p>
+                    {pub.category && (
+                      <p className="text-xs text-primary font-medium">{pub.category}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Values Section */}
       <section className="py-20 px-4">

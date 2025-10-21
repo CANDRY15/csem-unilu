@@ -289,12 +289,14 @@ export type Database = {
           cover_image: string | null
           created_at: string
           excerpt: string | null
+          featured: boolean | null
           id: string
           image_url: string | null
           pdf_url: string | null
           published_at: string | null
           status: string
           title: string
+          type: string | null
           updated_at: string
         }
         Insert: {
@@ -305,12 +307,14 @@ export type Database = {
           cover_image?: string | null
           created_at?: string
           excerpt?: string | null
+          featured?: boolean | null
           id?: string
           image_url?: string | null
           pdf_url?: string | null
           published_at?: string | null
           status?: string
           title: string
+          type?: string | null
           updated_at?: string
         }
         Update: {
@@ -321,12 +325,14 @@ export type Database = {
           cover_image?: string | null
           created_at?: string
           excerpt?: string | null
+          featured?: boolean | null
           id?: string
           image_url?: string | null
           pdf_url?: string | null
           published_at?: string | null
           status?: string
           title?: string
+          type?: string | null
           updated_at?: string
         }
         Relationships: [
