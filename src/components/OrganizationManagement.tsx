@@ -180,7 +180,7 @@ export function OrganizationManagement() {
         toast({ title: "Échec du téléchargement de la photo", variant: "destructive" });
         return;
       }
-      photoUrl = supabase.storage.from('member-photos').getPublicUrl(data.path).data.publicUrl;
+      photoUrl = data.path;
     }
     
     const member = {
@@ -214,7 +214,7 @@ export function OrganizationManagement() {
         toast({ title: "Échec du téléchargement du logo", variant: "destructive" });
         return;
       }
-      logoUrl = supabase.storage.from('department-logos').getPublicUrl(data.path).data.publicUrl;
+      logoUrl = data.path;
     }
     
     const dept = {
