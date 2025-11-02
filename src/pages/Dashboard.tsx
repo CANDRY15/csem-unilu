@@ -15,12 +15,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
-import { Loader2, Plus, Edit, Trash2, FileText, Users } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, FileText, Users, Calendar } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { OrganizationManagement } from "@/components/OrganizationManagement";
 import { DepartmentMembersManagement } from "@/components/DepartmentMembersManagement";
 import { LibraryManagement } from "@/components/LibraryManagement";
 import { PublicationManagement } from "@/components/PublicationManagement";
+import { EventsManagement } from "@/components/EventsManagement";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -79,6 +80,10 @@ const Dashboard = () => {
                   <FileText className="h-4 w-4 mr-2" />
                   Bibliothèque
                 </TabsTrigger>
+                <TabsTrigger value="events">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Événements
+                </TabsTrigger>
               </>
             )}
           </TabsList>
@@ -99,6 +104,10 @@ const Dashboard = () => {
               
               <TabsContent value="library">
                 <LibraryManagement />
+              </TabsContent>
+              
+              <TabsContent value="events">
+                <EventsManagement />
               </TabsContent>
             </>
           )}

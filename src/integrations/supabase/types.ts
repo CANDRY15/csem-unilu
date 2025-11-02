@@ -203,6 +203,92 @@ export type Database = {
         }
         Relationships: []
       }
+      event_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          event_id: string
+          id: string
+          photo_url: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          photo_url: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          photo_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_photos_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          attendees: number | null
+          cover_photo: string | null
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          location: string
+          organizer: string | null
+          price: string | null
+          registration_link: string | null
+          status: string
+          time: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          attendees?: number | null
+          cover_photo?: string | null
+          created_at?: string
+          date: string
+          description?: string | null
+          id?: string
+          location: string
+          organizer?: string | null
+          price?: string | null
+          registration_link?: string | null
+          status: string
+          time?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          attendees?: number | null
+          cover_photo?: string | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          location?: string
+          organizer?: string | null
+          price?: string | null
+          registration_link?: string | null
+          status?: string
+          time?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       membres_departement: {
         Row: {
           bio: string | null
