@@ -87,15 +87,22 @@ export function OrganizationManagement() {
   // Mutations for Comité Central
   const saveComiteMutation = useMutation({
     mutationFn: async (member: Partial<ComiteMember>) => {
+      console.log("Saving member:", member);
       if (member.id) {
         const { error } = await supabase
           .from("comite_central")
           .update(member as any)
           .eq("id", member.id);
-        if (error) throw error;
+        if (error) {
+          console.error("Update error:", error);
+          throw error;
+        }
       } else {
         const { error } = await supabase.from("comite_central").insert([member as any]);
-        if (error) throw error;
+        if (error) {
+          console.error("Insert error:", error);
+          throw error;
+        }
       }
     },
     onSuccess: () => {
@@ -104,8 +111,13 @@ export function OrganizationManagement() {
       setIsComiteDialogOpen(false);
       setEditingComite(null);
     },
-    onError: () => {
-      toast({ title: "Erreur lors de la sauvegarde", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Mutation error:", error);
+      toast({ 
+        title: "Erreur lors de la sauvegarde", 
+        description: error.message || "Une erreur est survenue",
+        variant: "destructive" 
+      });
     },
   });
 
@@ -169,17 +181,27 @@ export function OrganizationManagement() {
     let photoUrl = editingComite?.photo;
     const photoFile = (formData.get("photo") as File);
     
+    console.log("Photo file:", photoFile?.name, "size:", photoFile?.size);
+    
     if (photoFile && photoFile.size > 0) {
       const fileExt = photoFile.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+      console.log("Uploading to:", fileName);
+      
       const { data, error } = await supabase.storage
         .from('member-photos')
         .upload(fileName, photoFile);
       
       if (error) {
-        toast({ title: "Échec du téléchargement de la photo", variant: "destructive" });
+        console.error("Upload error:", error);
+        toast({ 
+          title: "Échec du téléchargement de la photo", 
+          description: error.message,
+          variant: "destructive" 
+        });
         return;
       }
+      console.log("Upload success, path:", data.path);
       photoUrl = data.path;
     }
     
@@ -193,6 +215,7 @@ export function OrganizationManagement() {
       description: formData.get("description") as string || null,
       ordre: parseInt(formData.get("ordre") as string) || 0,
     };
+    console.log("Submitting member:", member);
     saveComiteMutation.mutate(member);
   };
 
