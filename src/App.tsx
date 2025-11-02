@@ -9,6 +9,7 @@ import Publications from "./pages/Publications";
 import Events from "./pages/Events";
 import Team from "./pages/Team";
 import DepartmentDetail from "./pages/DepartmentDetail";
+import ComiteMemberDetail from "./pages/ComiteMemberDetail";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/events" element={<Events />} />
           <Route path="/team" element={<Team />} />
           <Route path="/team/department/:id" element={<DepartmentDetail />} />
+          <Route path="/team/comite/:id" element={<ComiteMemberDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />

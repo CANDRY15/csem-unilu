@@ -72,10 +72,11 @@ export default function Team() {
             ) : (
               <div className="grid gap-12 max-w-6xl mx-auto">
                 {leadership?.map((member) => (
-                  <Card key={member.id} className="overflow-hidden shadow-brand hover:shadow-lg transition-all">
-                    <div className="p-8 md:p-12">
+                  <Link key={member.id} to={`/team/comite/${member.id}`}>
+                    <Card className="overflow-hidden shadow-brand hover:shadow-lg transition-all cursor-pointer group border-2 border-transparent hover:border-primary/20">
+                      <div className="p-8 md:p-12">
                       <div className="text-center mb-8">
-                        <h3 className="text-3xl font-bold mb-2">{member.nom}</h3>
+                        <h3 className="text-3xl font-bold mb-2 group-hover:text-primary transition-colors">{member.nom}</h3>
                         <p className="text-lg text-muted-foreground">{member.fonction}</p>
                       </div>
                       
@@ -153,7 +154,8 @@ export default function Team() {
                         </div>
                       </div>
                     </div>
-                  </Card>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             )}
