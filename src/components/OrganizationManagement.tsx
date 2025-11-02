@@ -205,8 +205,7 @@ export function OrganizationManagement() {
       photoUrl = data.path;
     }
     
-    const member = {
-      id: editingComite?.id,
+    const member: any = {
       nom: formData.get("nom") as string,
       fonction: formData.get("fonction") as string,
       niveau: formData.get("niveau") as string,
@@ -215,6 +214,12 @@ export function OrganizationManagement() {
       description: formData.get("description") as string || null,
       ordre: parseInt(formData.get("ordre") as string) || 0,
     };
+    
+    // Only include id if we're editing an existing member
+    if (editingComite?.id) {
+      member.id = editingComite.id;
+    }
+    
     console.log("Submitting member:", member);
     saveComiteMutation.mutate(member);
   };
