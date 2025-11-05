@@ -71,34 +71,41 @@ const Events = () => {
 
     return (
       <>
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="group overflow-hidden hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
           {event.cover_photo && (
-            <div className="w-full h-48 overflow-hidden rounded-t-lg">
+            <div className="relative w-full h-56 overflow-hidden">
               <img
                 src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${event.cover_photo}`}
                 alt={event.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             </div>
           )}
           <CardContent className="p-6 space-y-4">
-            <h3 className="text-xl font-semibold">{event.title}</h3>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              {event.title}
+            </h3>
             {event.description && (
-              <p className="text-sm text-muted-foreground">{event.description}</p>
+              <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
             )}
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4 text-primary" />
                 <span>{formatDate(event.date)}</span>
               </div>
               {event.attendees && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <Users className="h-4 w-4 text-secondary" />
                   <span>{event.attendees} participants</span>
                 </div>
               )}
             </div>
-            <Button variant="outline" className="w-full" onClick={() => setShowPhotos(true)}>
+            <Button 
+              variant="outline" 
+              className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors" 
+              onClick={() => setShowPhotos(true)}
+            >
               Voir les photos
             </Button>
           </CardContent>
@@ -108,23 +115,25 @@ const Events = () => {
           <Dialog open={showPhotos} onOpenChange={setShowPhotos}>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{event.title}</DialogTitle>
+                <DialogTitle className="text-2xl font-bold">{event.title}</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                 {photos.map((photo) => (
-                  <div key={photo.id}>
+                  <div key={photo.id} className="group relative overflow-hidden rounded-lg">
                     <img
                       src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${photo.photo_url}`}
                       alt={photo.caption || "Event photo"}
-                      className="w-full h-48 object-cover rounded-lg"
+                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                     {photo.caption && (
-                      <p className="text-xs text-center mt-1">{photo.caption}</p>
+                      <div className="absolute bottom-0 left-0 right-0 bg-background/90 p-2">
+                        <p className="text-xs text-center">{photo.caption}</p>
+                      </div>
                     )}
                   </div>
                 ))}
                 {photos.length === 0 && (
-                  <p className="col-span-full text-center text-muted-foreground">
+                  <p className="col-span-full text-center text-muted-foreground py-8">
                     Aucune photo disponible pour cet événement
                   </p>
                 )}
@@ -155,64 +164,95 @@ const Events = () => {
 
         {/* Upcoming Events */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8">Événements à Venir</h2>
-          <div className="grid lg:grid-cols-2 gap-6">
+          <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Événements à Venir
+            </span>
+          </h2>
+          <div className="grid lg:grid-cols-2 gap-8">
             {upcomingEvents.map((event) => (
               <Card
                 key={event.id}
-                className="hover:shadow-brand transition-all duration-300 hover:-translate-y-1"
+                className="group overflow-hidden hover:shadow-brand transition-all duration-300 hover:-translate-y-2 border-2 hover:border-primary/50"
               >
                 {event.cover_photo && (
-                  <div className="w-full h-48 overflow-hidden rounded-t-lg">
+                  <div className="relative w-full h-64 overflow-hidden">
                     <img
                       src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${event.cover_photo}`}
                       alt={event.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <Badge variant="secondary" className="backdrop-blur-sm bg-background/80">
+                        {getStatusLabel(event.status)}
+                      </Badge>
+                      {event.price && (
+                        <Badge variant="outline" className="backdrop-blur-sm bg-background/80 font-semibold">
+                          {event.price}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 )}
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-2">
-                    <Badge variant="secondary">{getStatusLabel(event.status)}</Badge>
-                    {event.price && (
-                      <Badge variant="outline">{event.price}</Badge>
-                    )}
-                  </div>
-                  <CardTitle className="text-2xl">{event.title}</CardTitle>
+                <CardHeader className="space-y-3">
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                    {event.title}
+                  </CardTitle>
                   {event.organizer && (
-                    <p className="text-sm text-muted-foreground">Organisé par: {event.organizer}</p>
+                    <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Organisé par: {event.organizer}
+                    </p>
                   )}
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3 text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-primary" />
-                      <span>{formatDate(event.date)}</span>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                      <Calendar className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-muted-foreground mb-1">Date</p>
+                        <p className="text-sm font-medium">{formatDate(event.date)}</p>
+                      </div>
                     </div>
                     {event.time && (
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-secondary" />
-                        <span>{event.time}</span>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/5 border border-secondary/10">
+                        <Clock className="h-5 w-5 text-secondary mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-1">Heure</p>
+                          <p className="text-sm font-medium">{event.time}</p>
+                        </div>
                       </div>
                     )}
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-accent" />
-                      <span>{event.location}</span>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/5 border border-accent/10 col-span-2">
+                      <MapPin className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-muted-foreground mb-1">Lieu</p>
+                        <p className="text-sm font-medium">{event.location}</p>
+                      </div>
                     </div>
                     {event.attendees && (
-                      <div className="flex items-center gap-2">
-                        <Users className="h-5 w-5 text-primary" />
-                        <span>{event.attendees} participants attendus</span>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10 col-span-2">
+                        <Users className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-1">Participants</p>
+                          <p className="text-sm font-medium">{event.attendees} personnes attendues</p>
+                        </div>
                       </div>
                     )}
                   </div>
                   {event.description && (
-                    <p className="text-sm text-muted-foreground">{event.description}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                      {event.description}
+                    </p>
                   )}
                   <Button
-                    variant="hero"
-                    className="w-full mt-4"
-                    onClick={() => event.registration_link && window.open(event.registration_link, '_blank')}
+                    className="w-full bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity text-primary-foreground font-semibold py-6 text-base"
+                    onClick={() => {
+                      if (event.registration_link) {
+                        window.open(event.registration_link, '_blank', 'noopener,noreferrer');
+                      }
+                    }}
                     disabled={!event.registration_link}
                   >
                     S'inscrire à l'événement
@@ -220,16 +260,32 @@ const Events = () => {
                 </CardContent>
               </Card>
             ))}
+            {upcomingEvents.length === 0 && (
+              <div className="col-span-2 text-center py-12">
+                <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <p className="text-muted-foreground text-lg">Aucun événement à venir pour le moment</p>
+              </div>
+            )}
           </div>
         </section>
 
         {/* Past Events */}
         <section>
-          <h2 className="text-3xl font-bold mb-8">Événements Passés</h2>
+          <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
+            <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+              Événements Passés
+            </span>
+          </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pastEvents.map((event) => (
               <PastEventCard key={event.id} event={event} />
             ))}
+            {pastEvents.length === 0 && (
+              <div className="col-span-full text-center py-12">
+                <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <p className="text-muted-foreground text-lg">Aucun événement passé disponible</p>
+              </div>
+            )}
           </div>
         </section>
 
