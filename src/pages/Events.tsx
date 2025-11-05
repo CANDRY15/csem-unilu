@@ -3,13 +3,14 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Users } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, Share2, Facebook, Twitter, Linkedin, Mail } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const Events = () => {
   const { data: upcomingEvents = [] } = useQuery({
@@ -51,6 +52,36 @@ const Events = () => {
 
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), "dd MMMM yyyy", { locale: fr });
+  };
+
+  const shareEvent = (event: any, platform: string) => {
+    const url = window.location.href;
+    const text = `${event.title} - ${formatDate(event.date)} à ${event.location}`;
+    
+    let shareUrl = "";
+    
+    switch (platform) {
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        break;
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        break;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+      case "email":
+        shareUrl = `mailto:?subject=${encodeURIComponent(event.title)}&body=${encodeURIComponent(text + " " + url)}`;
+        break;
+      case "copy":
+        navigator.clipboard.writeText(url);
+        toast.success("Lien copié dans le presse-papier!");
+        return;
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   const PastEventCard = ({ event }: { event: any }) => {
@@ -101,13 +132,61 @@ const Events = () => {
                 </div>
               )}
             </div>
-            <Button 
-              variant="outline" 
-              className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors" 
-              onClick={() => setShowPhotos(true)}
-            >
-              Voir les photos
-            </Button>
+            <div className="space-y-3">
+              <Button 
+                variant="outline" 
+                className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors" 
+                onClick={() => setShowPhotos(true)}
+              >
+                Voir les photos
+              </Button>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Share2 className="h-3 w-3" />
+                  Partager:
+                </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => shareEvent(event, "facebook")}
+                >
+                  <Facebook className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => shareEvent(event, "twitter")}
+                >
+                  <Twitter className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => shareEvent(event, "linkedin")}
+                >
+                  <Linkedin className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => shareEvent(event, "email")}
+                >
+                  <Mail className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => shareEvent(event, "copy")}
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -242,21 +321,69 @@ const Events = () => {
                     )}
                   </div>
                   {event.description && (
-                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                   <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
                       {event.description}
                     </p>
                   )}
-                  <Button
-                    className="w-full bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity text-primary-foreground font-semibold py-6 text-base"
-                    onClick={() => {
-                      if (event.registration_link) {
-                        window.open(event.registration_link, '_blank', 'noopener,noreferrer');
-                      }
-                    }}
-                    disabled={!event.registration_link}
-                  >
-                    S'inscrire à l'événement
-                  </Button>
+                  <div className="space-y-3">
+                    <Button
+                      className="w-full bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity text-primary-foreground font-semibold py-6 text-base"
+                      onClick={() => {
+                        if (event.registration_link) {
+                          window.open(event.registration_link, '_blank', 'noopener,noreferrer');
+                        }
+                      }}
+                      disabled={!event.registration_link}
+                    >
+                      S'inscrire à l'événement
+                    </Button>
+                    <div className="flex items-center justify-center gap-2 pt-2">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Share2 className="h-3 w-3" />
+                        Partager:
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={() => shareEvent(event, "facebook")}
+                      >
+                        <Facebook className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={() => shareEvent(event, "twitter")}
+                      >
+                        <Twitter className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={() => shareEvent(event, "linkedin")}
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={() => shareEvent(event, "email")}
+                      >
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={() => shareEvent(event, "copy")}
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ))}

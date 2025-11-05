@@ -18,6 +18,7 @@ export const EventsManagement = () => {
   const [eventType, setEventType] = useState<"upcoming" | "past">("upcoming");
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [selectedEventForPhotos, setSelectedEventForPhotos] = useState<any>(null);
+  const [eventPhotosToUpload, setEventPhotosToUpload] = useState<File[]>([]);
 
   const { data: events } = useQuery({
     queryKey: ["events"],
@@ -148,7 +149,80 @@ export const EventsManagement = () => {
       event.id = editingEvent.id;
     }
 
-    saveEventMutation.mutate(event);
+    try {
+      if (event.id) {
+        const { error } = await supabase
+          .from("events")
+          .update(event)
+          .eq("id", event.id);
+        if (error) throw error;
+        
+        // Upload photos for past events if any
+        if (eventType === "past" && eventPhotosToUpload.length > 0) {
+          for (const photo of eventPhotosToUpload) {
+            const fileExt = photo.name.split(".").pop();
+            const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+            const { error: uploadError, data } = await supabase.storage
+              .from("event-photos")
+              .upload(fileName, photo);
+
+            if (!uploadError && data) {
+              await supabase.from("event_photos").insert({
+                event_id: event.id,
+                photo_url: data.path,
+              });
+            }
+          }
+        }
+      } else {
+        const { error, data: newEvent } = await supabase
+          .from("events")
+          .insert(event)
+          .select()
+          .single();
+        if (error) throw error;
+        
+        // Upload photos for past events if any
+        if (eventType === "past" && eventPhotosToUpload.length > 0 && newEvent) {
+          for (const photo of eventPhotosToUpload) {
+            const fileExt = photo.name.split(".").pop();
+            const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+            const { error: uploadError, data } = await supabase.storage
+              .from("event-photos")
+              .upload(fileName, photo);
+
+            if (!uploadError && data) {
+              await supabase.from("event_photos").insert({
+                event_id: newEvent.id,
+                photo_url: data.path,
+              });
+            }
+          }
+        }
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["event-photos"] });
+      toast.success("Événement enregistré avec succès");
+      setIsDialogOpen(false);
+      setEditingEvent(null);
+      setEventPhotosToUpload([]);
+    } catch (error: any) {
+      toast.error("Erreur lors de l'enregistrement: " + error.message);
+    }
+  };
+
+  const handlePhotosSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length + eventPhotosToUpload.length > 10) {
+      toast.error("Vous ne pouvez ajouter que 10 photos maximum");
+      return;
+    }
+    setEventPhotosToUpload([...eventPhotosToUpload, ...files]);
+  };
+
+  const removePhotoFromUpload = (index: number) => {
+    setEventPhotosToUpload(eventPhotosToUpload.filter((_, i) => i !== index));
   };
 
   const handlePhotoUpload = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -185,6 +259,7 @@ export const EventsManagement = () => {
   const openDialog = (event?: any, type: "upcoming" | "past" = "upcoming") => {
     setEditingEvent(event || null);
     setEventType(event?.type || type);
+    setEventPhotosToUpload([]);
     setIsDialogOpen(true);
   };
 
@@ -401,6 +476,44 @@ export const EventsManagement = () => {
                 <p className="text-sm text-muted-foreground mt-1">Photo actuelle: {editingEvent.cover_photo}</p>
               )}
             </div>
+
+            {eventType === "past" && (
+              <div>
+                <Label>Photos de l'événement (max 10)</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handlePhotosSelect}
+                  disabled={eventPhotosToUpload.length >= 10}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {eventPhotosToUpload.length}/10 photos sélectionnées
+                </p>
+                {eventPhotosToUpload.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {eventPhotosToUpload.map((file, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                          onClick={() => removePhotoFromUpload(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div>
               <Label htmlFor="description">Description</Label>
