@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Users, Share2, Facebook, Twitter, Linkedin, Mail } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, Share2, Facebook, Twitter, Linkedin, Mail, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -11,6 +11,7 @@ import { fr } from "date-fns/locale";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Events = () => {
   const { data: upcomingEvents = [] } = useQuery({
@@ -85,7 +86,7 @@ const Events = () => {
   };
 
   const PastEventCard = ({ event }: { event: any }) => {
-    const [showPhotos, setShowPhotos] = useState(false);
+    const [showDetails, setShowDetails] = useState(false);
 
     const { data: photos = [] } = useQuery({
       queryKey: ["event-photos", event.id],
@@ -93,133 +94,192 @@ const Events = () => {
         const { data, error } = await supabase
           .from("event_photos")
           .select("*")
-          .eq("event_id", event.id);
+          .eq("event_id", event.id)
+          .limit(10);
         if (error) throw error;
         return data;
       },
-      enabled: showPhotos,
     });
 
     return (
       <>
-        <Card className="group overflow-hidden hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
-          {event.cover_photo && (
-            <div className="relative w-full h-56 overflow-hidden">
-              <img
-                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${event.cover_photo}`}
-                alt={event.title}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-            </div>
-          )}
-          <CardContent className="p-6 space-y-4">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        <Card 
+          className="group overflow-hidden border-2 border-border/50 hover:border-primary/50 hover:shadow-brand transition-all cursor-pointer"
+          onClick={() => setShowDetails(true)}
+        >
+          <div className="aspect-[4/3] relative overflow-hidden">
+            {photos.length > 0 ? (
+              <Carousel className="w-full h-full">
+                <CarouselContent>
+                  {photos.map((photo, index) => (
+                    <CarouselItem key={photo.id}>
+                      <div className="relative h-full w-full aspect-[4/3]">
+                        <img
+                          src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${photo.photo_url}`}
+                          alt={photo.caption || `Photo ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        {photo.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                            <p className="text-white text-sm">{photo.caption}</p>
+                          </div>
+                        )}
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </Carousel>
+            ) : (
+              <div className="w-full h-full bg-gradient-subtle flex items-center justify-center">
+                <Calendar className="w-16 h-16 text-muted-foreground/30" />
+              </div>
+            )}
+          </div>
+          
+          <CardContent className="p-6">
+            <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
               {event.title}
             </h3>
-            {event.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+              <Calendar className="w-4 h-4" />
+              <span>{formatDate(event.date)}</span>
+            </div>
+            {photos.length > 0 && (
+              <p className="text-sm text-primary font-semibold">
+                {photos.length} photo{photos.length > 1 ? 's' : ''}
+              </p>
             )}
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="h-4 w-4 text-primary" />
-                <span>{formatDate(event.date)}</span>
-              </div>
-              {event.attendees && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Users className="h-4 w-4 text-secondary" />
-                  <span>{event.attendees} participants</span>
-                </div>
-              )}
-            </div>
-            <div className="space-y-3">
-              <Button 
-                variant="outline" 
-                className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors" 
-                onClick={() => setShowPhotos(true)}
-              >
-                Voir les photos
-              </Button>
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Share2 className="h-3 w-3" />
-                  Partager:
-                </span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  onClick={() => shareEvent(event, "facebook")}
-                >
-                  <Facebook className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  onClick={() => shareEvent(event, "twitter")}
-                >
-                  <Twitter className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  onClick={() => shareEvent(event, "linkedin")}
-                >
-                  <Linkedin className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  onClick={() => shareEvent(event, "email")}
-                >
-                  <Mail className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  onClick={() => shareEvent(event, "copy")}
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Cliquez pour voir les détails
+            </p>
           </CardContent>
         </Card>
 
-        {showPhotos && (
-          <Dialog open={showPhotos} onOpenChange={setShowPhotos}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold">{event.title}</DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                {photos.map((photo) => (
-                  <div key={photo.id} className="group relative overflow-hidden rounded-lg">
-                    <img
-                      src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${photo.photo_url}`}
-                      alt={photo.caption || "Event photo"}
-                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    {photo.caption && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-background/90 p-2">
-                        <p className="text-xs text-center">{photo.caption}</p>
-                      </div>
-                    )}
+        <Dialog open={showDetails} onOpenChange={setShowDetails}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">{event.title}</DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-6">
+              {/* Event Info */}
+              <div className="grid grid-cols-2 gap-4 p-4 bg-gradient-subtle rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Date</p>
+                    <p className="font-semibold">{formatDate(event.date)}</p>
                   </div>
-                ))}
-                {photos.length === 0 && (
-                  <p className="col-span-full text-center text-muted-foreground py-8">
-                    Aucune photo disponible pour cet événement
-                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Lieu</p>
+                    <p className="font-semibold">{event.location}</p>
+                  </div>
+                </div>
+                {event.attendees && (
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Participants</p>
+                      <p className="font-semibold">{event.attendees}</p>
+                    </div>
+                  </div>
+                )}
+                {event.organizer && (
+                  <div className="flex items-center gap-2">
+                    <User className="w-5 h-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Organisateur</p>
+                      <p className="font-semibold">{event.organizer}</p>
+                    </div>
+                  </div>
                 )}
               </div>
-            </DialogContent>
-          </Dialog>
-        )}
+
+              {/* Description */}
+              {event.description && (
+                <div>
+                  <h4 className="font-semibold mb-2">Description</h4>
+                  <p className="text-muted-foreground">{event.description}</p>
+                </div>
+              )}
+
+              {/* Photos Gallery */}
+              {photos.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-4">Galerie Photos</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {photos.map((photo, index) => (
+                      <div key={photo.id} className="relative aspect-square rounded-lg overflow-hidden group/photo">
+                        <img
+                          src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${photo.photo_url}`}
+                          alt={photo.caption || `Photo ${index + 1}`}
+                          className="w-full h-full object-cover transition-transform group-hover/photo:scale-110"
+                        />
+                        {photo.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover/photo:opacity-100 transition-opacity">
+                            <p className="text-white text-xs">{photo.caption}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Social Sharing */}
+              <div className="pt-4 border-t">
+                <p className="text-sm font-semibold mb-3">Partager cet événement</p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => shareEvent(event, 'facebook')}
+                  >
+                    <Facebook className="w-4 h-4 mr-2" />
+                    Facebook
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => shareEvent(event, 'twitter')}
+                  >
+                    <Twitter className="w-4 h-4 mr-2" />
+                    Twitter
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => shareEvent(event, 'linkedin')}
+                  >
+                    <Linkedin className="w-4 h-4 mr-2" />
+                    LinkedIn
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => shareEvent(event, 'email')}
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => shareEvent(event, 'copy')}
+                  >
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Copier
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </>
     );
   };
