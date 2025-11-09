@@ -8,10 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import type { CarouselApi } from "@/components/ui/carousel";
 
 const Events = () => {
   const { data: upcomingEvents = [] } = useQuery({
@@ -87,6 +88,7 @@ const Events = () => {
 
   const PastEventCard = ({ event }: { event: any }) => {
     const [showDetails, setShowDetails] = useState(false);
+    const [api, setApi] = useState<CarouselApi>();
 
     const { data: photos = [] } = useQuery({
       queryKey: ["event-photos", event.id],
@@ -101,15 +103,23 @@ const Events = () => {
       },
     });
 
+    // Auto-advance carousel every 5 seconds
+    useEffect(() => {
+      if (!api || photos.length === 0) return;
+
+      const intervalId = setInterval(() => {
+        api.scrollNext();
+      }, 5000);
+
+      return () => clearInterval(intervalId);
+    }, [api, photos.length]);
+
     return (
       <>
-        <Card 
-          className="group overflow-hidden border-2 border-border/50 hover:border-primary/50 hover:shadow-brand transition-all cursor-pointer"
-          onClick={() => setShowDetails(true)}
-        >
+        <Card className="group overflow-hidden border-2 border-border/50 hover:border-primary/50 hover:shadow-brand transition-all">
           <div className="aspect-[4/3] relative overflow-hidden">
             {photos.length > 0 ? (
-              <Carousel className="w-full h-full">
+              <Carousel className="w-full h-full" opts={{ loop: true }} setApi={setApi}>
                 <CarouselContent>
                   {photos.map((photo, index) => (
                     <CarouselItem key={photo.id}>
@@ -128,8 +138,14 @@ const Events = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
+                <CarouselPrevious 
+                  className="left-2" 
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <CarouselNext 
+                  className="right-2"
+                  onClick={(e) => e.stopPropagation()}
+                />
               </Carousel>
             ) : (
               <div className="w-full h-full bg-gradient-subtle flex items-center justify-center">
@@ -151,9 +167,13 @@ const Events = () => {
                 {photos.length} photo{photos.length > 1 ? 's' : ''}
               </p>
             )}
-            <p className="text-sm text-muted-foreground mt-2">
-              Cliquez pour voir les détails
-            </p>
+            <Button 
+              onClick={() => setShowDetails(true)}
+              className="w-full mt-4"
+              variant="outline"
+            >
+              Voir les détails
+            </Button>
           </CardContent>
         </Card>
 

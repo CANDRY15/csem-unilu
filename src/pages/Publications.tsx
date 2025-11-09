@@ -2,12 +2,16 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Download, FileText, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
 
 const Publications = () => {
+  const [selectedPublication, setSelectedPublication] = useState<any>(null);
   const { data: publications, isLoading } = useQuery({
     queryKey: ["publications"],
     queryFn: async () => {
@@ -68,7 +72,11 @@ const Publications = () => {
             </div>
           ) : (
             publications?.map((pub) => (
-              <div key={pub.id} className="group cursor-pointer space-y-3">
+              <div 
+                key={pub.id} 
+                className="group cursor-pointer space-y-3"
+                onClick={() => setSelectedPublication(pub)}
+              >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-lg hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
                   {pub.cover_image ? (
                     <img
@@ -84,17 +92,8 @@ const Publications = () => {
                       <p className="text-center font-bold text-lg">{pub.title}</p>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    {pub.pdf_url && (
-                      <Button 
-                        variant="secondary" 
-                        size="sm"
-                        onClick={() => window.open(pub.pdf_url, '_blank')}
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Télécharger
-                      </Button>
-                    )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <FileText className="h-12 w-12 text-white" />
                   </div>
                 </div>
                 <div className="space-y-1">
@@ -103,13 +102,85 @@ const Publications = () => {
                   </h3>
                   <p className="text-xs text-muted-foreground">{pub.authors || "CSEM"}</p>
                   {pub.category && (
-                    <p className="text-xs text-primary font-medium">{pub.category}</p>
+                    <Badge variant="secondary" className="text-xs">{pub.category}</Badge>
                   )}
                 </div>
               </div>
             ))
           )}
         </div>
+
+        {/* Publication Details Dialog */}
+        <Dialog open={!!selectedPublication} onOpenChange={() => setSelectedPublication(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">{selectedPublication?.title}</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              {selectedPublication?.cover_image && (
+                <div className="w-full max-w-md mx-auto">
+                  <img
+                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/publication-files/${selectedPublication.cover_image}`}
+                    alt={selectedPublication.title}
+                    className="w-full rounded-lg shadow-lg"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://placehold.co/400x600/1a1a1a/white?text=' + encodeURIComponent(selectedPublication.title);
+                    }}
+                  />
+                </div>
+              )}
+
+              {selectedPublication?.authors && (
+                <div className="text-center">
+                  <p className="text-lg text-muted-foreground">
+                    Par <span className="font-semibold">{selectedPublication.authors}</span>
+                  </p>
+                </div>
+              )}
+
+              {selectedPublication?.category && (
+                <div className="flex justify-center">
+                  <Badge variant="secondary" className="text-sm px-4 py-1">
+                    {selectedPublication.category}
+                  </Badge>
+                </div>
+              )}
+
+              <div className="border-t pt-6">
+                <h3 className="text-xl font-bold mb-4">Résumé</h3>
+                <div className="prose max-w-none text-muted-foreground">
+                  <p className="whitespace-pre-wrap leading-relaxed">
+                    {selectedPublication?.excerpt || selectedPublication?.content}
+                  </p>
+                </div>
+              </div>
+
+              {selectedPublication?.pdf_url && (
+                <div className="border-t pt-6 space-y-4">
+                  <h3 className="text-xl font-bold">Accéder au document complet</h3>
+                  <p className="text-muted-foreground">
+                    Pour consulter l'article complet au format électronique, cliquez sur le bouton ci-dessous pour accéder au document sur Google Drive.
+                  </p>
+                  <Button
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity text-primary-foreground font-semibold"
+                    asChild
+                  >
+                    <a 
+                      href={selectedPublication.pdf_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <ExternalLink className="mr-2 h-5 w-5" />
+                      Ouvrir le document (Google Drive)
+                    </a>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* CTA */}
         <Card className="mt-16 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
