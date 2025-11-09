@@ -139,7 +139,7 @@ export const EventsManagement = () => {
       organizer: formData.get("organizer") as string || null,
       registration_link: formData.get("registration_link") as string || null,
       attendees: parseInt(formData.get("attendees") as string) || null,
-      status: formData.get("status") as string,
+      status: eventType === "past" ? "completed" : (formData.get("status") as string || "open"),
       type: eventType,
       description: formData.get("description") as string || null,
       cover_photo: coverPhotoUrl,
