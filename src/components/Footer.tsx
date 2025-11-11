@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Phone, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Mail, MapPin, Phone, Facebook, Twitter, Linkedin, MessageCircle } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -12,7 +12,7 @@ export const Footer = () => {
               CSEM
             </h3>
             <p className="text-sm text-muted-foreground">
-              Cellule Scientifique des Étudiants en Médecine de l'Université de Lubumbashi
+              La Cellule Scientifique des Etudiants en Médecine est un club scientifique au sein de la Faculté de Médecine de l'Université de Lubumbashi, créé depuis 2003 par ceux qui sont aujourd'hui nos éminents professeurs, CT et assistants. Ce club est l'unique de l'UNILU qui fait partie des CLEF (Clubs Leaders des Etudiants Francophones - AUF) depuis 5 bonnes années déjà.
             </p>
           </div>
 
@@ -67,28 +67,28 @@ export const Footer = () => {
             <h3 className="font-semibold">Suivez-nous</h3>
             <div className="flex gap-3">
               <a
-                href="https://facebook.com"
+                href="https://x.com/CsemUnilu54331?t=mOlpUubiVgNSQlgjruOo7w&s=08"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
               >
-                <Facebook className="h-5 w-5" />
+                <Twitter className="h-5 w-5" />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://www.instagram.com/csemunilu101?igsh=c3pyaGd1YXNmeDJt"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-muted hover:bg-secondary hover:text-secondary-foreground transition-colors"
               >
-                <Twitter className="h-5 w-5" />
+                <Linkedin className="h-5 w-5" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://whatsapp.com/channel/0029VbARYq08vd1O4a8cZz3v"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-muted hover:bg-accent hover:text-accent-foreground transition-colors"
               >
-                <Linkedin className="h-5 w-5" />
+                <MessageCircle className="h-5 w-5" />
               </a>
             </div>
           </div>

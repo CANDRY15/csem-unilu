@@ -74,8 +74,7 @@ const Home = () => {
               <span className="text-foreground">des Étudiants en Médecine</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              Promouvoir la recherche scientifique, l'innovation et l'excellence académique à la Faculté
-              de Médecine de l'Université de Lubumbashi
+              Club scientifique de la Faculté de Médecine créé depuis 2003, unique membre des CLEF (Clubs Leaders des Etudiants Francophones - AUF) à l'UNILU
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/library">
@@ -117,10 +116,7 @@ const Home = () => {
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-4xl font-bold">Notre Mission</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Le CSEM a pour mission de stimuler et valoriser la recherche scientifique menée par les
-              étudiants en médecine. Nous créons un environnement propice à l'innovation, facilitons
-              l'accès aux ressources académiques et encourageons la collaboration entre étudiants,
-              enseignants et chercheurs.
+              La Cellule Scientifique des Etudiants en Médecine est un club scientifique au sein de la Faculté de Médecine de l'Université de Lubumbashi, créé depuis 2003 par ceux qui sont aujourd'hui nos éminents professeurs, CT et assistants. Ce club est l'unique de l'UNILU qui fait partie des CLEF (Clubs Leaders des Etudiants Francophones - AUF) depuis 5 bonnes années déjà. L'objectif principal est celui de contribuer au développement du savoir, savoir-être, savoir-faire et savoir-faire-faire des carabins et des médecins, par la culture des échanges de connaissances médicales et par la recherche scientifique ; et cela s'inscrit de manière directe dans les objectifs de l'UNILU à travers la Faculté de Médecine.
             </p>
           </div>
         </div>
