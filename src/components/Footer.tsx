@@ -53,11 +53,11 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <span>contact@csem-unilu.org</span>
+                <span>csem.unilu@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-primary" />
-                <span>+243 XXX XXX XXX</span>
+                <span>+243 815 050 397</span>
               </li>
             </ul>
           </div>

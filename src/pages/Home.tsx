@@ -6,8 +6,19 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useEffect, useState } from "react";
+import type { CarouselApi } from "@/components/ui/carousel";
 
 const Home = () => {
+  const [api, setApi] = useState<CarouselApi>();
+
   const { data: featuredPublications } = useQuery({
     queryKey: ["featured-publications"],
     queryFn: async () => {
@@ -22,6 +33,51 @@ const Home = () => {
       return data;
     },
   });
+
+  const { data: upcomingEvents } = useQuery({
+    queryKey: ["upcoming-events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .eq("type", "upcoming")
+        .order("date", { ascending: true })
+        .limit(4);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: libraryDocs } = useQuery({
+    queryKey: ["library-docs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bibliotheque")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(4);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Auto-advance carousel every 5 seconds
+  useEffect(() => {
+    if (!api) return;
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [api]);
+
+  // Combine all items for carousel
+  const carouselItems = [
+    ...(featuredPublications?.map(item => ({ ...item, type: 'publication' as const })) || []),
+    ...(upcomingEvents?.map(item => ({ ...item, type: 'event' as const })) || []),
+    ...(libraryDocs?.map(item => ({ ...item, type: 'library' as const })) || []),
+  ];
 
   const features = [
     {
@@ -149,59 +205,121 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Publications */}
-      {featuredPublications && featuredPublications.length > 0 && (
+      {/* Featured Carousel */}
+      {carouselItems.length > 0 && (
         <section className="py-20 px-4">
           <div className="container mx-auto">
             <div className="text-center space-y-4 mb-12">
               <h2 className="text-4xl font-bold">À la Une</h2>
               <p className="text-lg text-muted-foreground">
-                Nos dernières publications et événements en vedette
+                Publications, événements et ressources récents
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredPublications.map((pub) => (
-                <div key={pub.id} className="group cursor-pointer space-y-3">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-lg hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
-                    {pub.cover_image ? (
-                      <img
-                        src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/publication-files/${pub.cover_image}`}
-                        alt={pub.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://placehold.co/400x600/1a1a1a/white?text=' + encodeURIComponent(pub.title);
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center p-4">
-                        <p className="text-center font-bold text-lg">{pub.title}</p>
+            <Carousel setApi={setApi} className="w-full max-w-6xl mx-auto">
+              <CarouselContent>
+                {carouselItems.map((item, index) => (
+                  <CarouselItem key={`${item.type}-${item.id}`} className="md:basis-1/2 lg:basis-1/3">
+                    <Link 
+                      to={
+                        item.type === 'publication' ? '/publications' :
+                        item.type === 'event' ? '/events' :
+                        '/library'
+                      }
+                      className="group cursor-pointer block"
+                    >
+                      <div className="space-y-3">
+                        <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-lg hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
+                          {item.type === 'publication' && (
+                            <>
+                              {item.cover_image ? (
+                                <img
+                                  src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/publication-files/${item.cover_image}`}
+                                  alt={item.title}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.src = 'https://placehold.co/400x600/1a1a1a/white?text=' + encodeURIComponent(item.title);
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center p-4">
+                                  <p className="text-center font-bold text-lg">{item.title}</p>
+                                </div>
+                              )}
+                              <div className="absolute top-2 right-2">
+                                <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+                                  Publication
+                                </span>
+                              </div>
+                            </>
+                          )}
+                          {item.type === 'event' && (
+                            <>
+                              {item.cover_photo ? (
+                                <img
+                                  src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/event-photos/${item.cover_photo}`}
+                                  alt={item.title}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.src = 'https://placehold.co/400x600/1a1a1a/white?text=' + encodeURIComponent(item.title);
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-secondary/20 via-accent/20 to-primary/20 flex items-center justify-center p-4">
+                                  <p className="text-center font-bold text-lg">{item.title}</p>
+                                </div>
+                              )}
+                              <div className="absolute top-2 right-2">
+                                <span className="px-3 py-1 bg-secondary text-secondary-foreground text-xs font-medium rounded-full">
+                                  Événement
+                                </span>
+                              </div>
+                            </>
+                          )}
+                          {item.type === 'library' && (
+                            <>
+                              {item.image_url ? (
+                                <img
+                                  src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/library-files/${item.image_url}`}
+                                  alt={item.titre}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.src = 'https://placehold.co/400x600/1a1a1a/white?text=' + encodeURIComponent(item.titre);
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-accent/20 via-primary/20 to-secondary/20 flex items-center justify-center p-4">
+                                  <p className="text-center font-bold text-lg">{item.titre}</p>
+                                </div>
+                              )}
+                              <div className="absolute top-2 right-2">
+                                <span className="px-3 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full">
+                                  Bibliothèque
+                                </span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                            {item.type === 'library' ? item.titre : item.title}
+                          </h3>
+                          <p className="text-xs text-muted-foreground">
+                            {item.type === 'publication' && (item.authors || "CSEM")}
+                            {item.type === 'event' && new Date(item.date).toLocaleDateString('fr-FR')}
+                            {item.type === 'library' && item.auteur}
+                          </p>
+                          {item.type === 'publication' && item.category && (
+                            <p className="text-xs text-primary font-medium">{item.category}</p>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      {pub.pdf_url && (
-                        <Button 
-                          variant="secondary" 
-                          size="sm"
-                          onClick={() => window.open(pub.pdf_url, '_blank')}
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          Télécharger
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                      {pub.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground">{pub.authors || "CSEM"}</p>
-                    {pub.category && (
-                      <p className="text-xs text-primary font-medium">{pub.category}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+                    </Link>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
         </section>
       )}
