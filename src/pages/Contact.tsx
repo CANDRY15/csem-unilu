@@ -5,8 +5,59 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Phone, Facebook, Twitter, Linkedin } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { toast } from "sonner";
+
+const contactFormSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Le nom est requis")
+    .max(100, "Le nom ne peut pas dépasser 100 caractères"),
+  email: z.string()
+    .trim()
+    .email("Email invalide")
+    .max(255, "L'email ne peut pas dépasser 255 caractères"),
+  subject: z.string()
+    .trim()
+    .min(1, "Le sujet est requis")
+    .max(200, "Le sujet ne peut pas dépasser 200 caractères"),
+  message: z.string()
+    .trim()
+    .min(10, "Le message doit contenir au moins 10 caractères")
+    .max(2000, "Le message ne peut pas dépasser 2000 caractères"),
+});
 
 const Contact = () => {
+  const form = useForm<z.infer<typeof contactFormSchema>>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof contactFormSchema>) => {
+    try {
+      // Sanitize and encode values for WhatsApp
+      const encodedMessage = encodeURIComponent(
+        `Nom: ${values.name}\nEmail: ${values.email}\nSujet: ${values.subject}\n\nMessage:\n${values.message}`
+      );
+      
+      // Open WhatsApp with pre-filled message
+      window.open(`https://wa.me/243815050397?text=${encodedMessage}`, '_blank');
+      
+      toast.success("Message préparé! Vous pouvez l'envoyer via WhatsApp.");
+      form.reset();
+    } catch (error) {
+      toast.error("Une erreur s'est produite. Veuillez réessayer.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Navigation />
@@ -29,40 +80,76 @@ const Contact = () => {
           <Card>
             <CardContent className="p-8 space-y-6">
               <h2 className="text-2xl font-bold">Envoyez-nous un Message</h2>
-              <form className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-2">
-                    Nom Complet
-                  </label>
-                  <Input id="name" placeholder="Votre nom" />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">
-                    Email
-                  </label>
-                  <Input id="email" type="email" placeholder="votre@email.com" />
-                </div>
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                    Sujet
-                  </label>
-                  <Input id="subject" placeholder="Sujet de votre message" />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">
-                    Message
-                  </label>
-                  <Textarea
-                    id="message"
-                    placeholder="Écrivez votre message ici..."
-                    rows={6}
-                    className="resize-none"
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nom Complet</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Votre nom" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <Button variant="hero" className="w-full" size="lg">
-                  Envoyer le Message
-                </Button>
-              </form>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="votre@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="subject"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sujet</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Sujet de votre message" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Message</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Écrivez votre message ici..."
+                            rows={6}
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button 
+                    variant="hero" 
+                    className="w-full" 
+                    size="lg" 
+                    type="submit"
+                    disabled={form.formState.isSubmitting}
+                  >
+                    {form.formState.isSubmitting ? "Envoi..." : "Envoyer le Message"}
+                  </Button>
+                </form>
+              </Form>
             </CardContent>
           </Card>
 
