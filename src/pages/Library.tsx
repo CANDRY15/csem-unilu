@@ -25,7 +25,7 @@ const Library = () => {
     { name: "Thèses", count: documents?.filter(d => d.type === "these").length || 0, icon: GraduationCap, color: "text-primary" },
     { name: "Travaux Pratiques", count: documents?.filter(d => d.type === "tp").length || 0, icon: FileText, color: "text-secondary" },
     { name: "Cours", count: documents?.filter(d => d.type === "cours").length || 0, icon: BookOpen, color: "text-accent" },
-    { name: "Présentations", count: documents?.filter(d => d.type === "presentation").length || 0, icon: FileText, color: "text-primary" },
+    { name: "Repas scientifique", count: documents?.filter(d => d.type === "presentation").length || 0, icon: FileText, color: "text-primary" },
   ];
 
   return (
