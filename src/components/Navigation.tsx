@@ -28,7 +28,7 @@ export const Navigation = () => {
   const navItems = [
     { name: "Accueil", path: "/" },
     { name: "Bibliothèque", path: "/library" },
-    { name: "Publications", path: "/publications" },
+    { name: "mini-revue", path: "/publications" },
     { name: "Événements", path: "/events" },
     { name: "Équipe", path: "/team" },
     { name: "Contact", path: "/contact" },
