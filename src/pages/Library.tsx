@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,12 @@ const Library = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      <SEO
+        title="Bibliothèque"
+        description="Accédez à la bibliothèque numérique du CSEM: thèses médicales, travaux pratiques, cours et présentations scientifiques pour étudiants en médecine à Lubumbashi."
+        keywords="bibliothèque médicale, thèses médecine, cours médecine UNILU, travaux pratiques médecine, ressources médicales Congo"
+        url="https://csem-unilu.org/library"
+      />
       <Navigation />
 
       <main className="container mx-auto px-4 pt-32 pb-20">

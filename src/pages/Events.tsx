@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -306,6 +307,12 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      <SEO
+        title="Événements"
+        description="Découvrez les événements scientifiques et académiques du CSEM: conférences, ateliers, séminaires médicaux à Lubumbashi. Inscrivez-vous aux prochains événements."
+        keywords="événements médicaux Lubumbashi, conférences CSEM, séminaires médecine, ateliers médicaux, formation continue médecine"
+        url="https://csem-unilu.org/events"
+      />
       <Navigation />
 
       <main className="container mx-auto px-4 pt-32 pb-20">

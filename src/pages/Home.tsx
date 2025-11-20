@@ -4,6 +4,7 @@ import { BookOpen, Calendar, Users, Microscope, GraduationCap, Award, Download }
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import studentsBackground from "@/assets/students-background.jpg";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,6 +117,12 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      <SEO
+        title="Accueil - CSEM UNILU"
+        description="La Cellule Scientifique des Etudiants en Médecine de l'Université de Lubumbashi. Publications médicales, événements scientifiques et ressources pour étudiants en médecine."
+        keywords="CSEM, médecine Lubumbashi, UNILU, publications médicales, événements médicaux, bibliothèque médicale, recherche médicale Congo"
+        url="https://csem-unilu.org"
+      />
       <Navigation />
 
       {/* Hero Section */}

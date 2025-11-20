@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,6 +61,12 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      <SEO
+        title="Contact"
+        description="Contactez le CSEM UNILU pour toute question ou collaboration. Adresse, réseaux sociaux et formulaire de contact disponibles."
+        keywords="contact CSEM, contacter CSEM, adresse CSEM Lubumbashi, email CSEM, réseaux sociaux CSEM"
+        url="https://csem-unilu.org/contact"
+      />
       <Navigation />
 
       <main className="container mx-auto px-4 pt-32 pb-20">
@@ -175,23 +182,15 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center gap-4">
                     <div className="p-3 rounded-lg bg-secondary/10">
                       <Mail className="h-6 w-6 text-secondary" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold">Email</h3>
-                      <p className="text-muted-foreground">contact@csem-unilu.org</p>
-                    </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center gap-4">
                     <div className="p-3 rounded-lg bg-accent/10">
                       <Phone className="h-6 w-6 text-accent" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">Téléphone</h3>
-                      <p className="text-muted-foreground">+243 XXX XXX XXX</p>
                     </div>
                   </div>
                 </div>

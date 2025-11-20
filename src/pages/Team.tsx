@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,12 @@ export default function Team() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Notre Équipe"
+        description="Découvrez le comité central et les départements du CSEM UNILU. Équipe de médecins, chercheurs et étudiants passionnés par la science médicale."
+        keywords="équipe CSEM, comité central CSEM, départements CSEM, membres CSEM, étudiants médecine Lubumbashi"
+        url="https://csem-unilu.org/team"
+      />
       <Navigation />
       
       <main className="flex-1 pt-20">

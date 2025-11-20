@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Library from "./pages/Library";
@@ -20,30 +21,32 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/publications" element={<Publications />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/team/department/:id" element={<DepartmentDetail />} />
-          <Route path="/team/comite/:id" element={<ComiteMemberDetail />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/article-review" element={<ArticleReview />} />
-          <Route path="/my-submissions" element={<MySubmissions />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/publications" element={<Publications />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/department/:id" element={<DepartmentDetail />} />
+            <Route path="/member/:id" element={<ComiteMemberDetail />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/article-review" element={<ArticleReview />} />
+            <Route path="/my-submissions" element={<MySubmissions />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

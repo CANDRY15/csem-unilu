@@ -47,17 +47,19 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-semibold">Contact</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                <span>Université de Lubumbashi, RDC</span>
+              <li className="flex items-start gap-2">
+                <MapPin className="h-4 w-4 text-primary mt-0.5" />
+                <span>
+                  Faculté de Médecine<br />
+                  Université de Lubumbashi<br />
+                  Lubumbashi, RDC
+                </span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <span>csem.unilu@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-primary" />
-                <span>+243 815 050 397</span>
               </li>
             </ul>
           </div>

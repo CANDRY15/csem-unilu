@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +30,13 @@ const Publications = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      <SEO
+        title="Mini-revue"
+        description="Découvrez les publications scientifiques et médicales des membres du CSEM UNILU. Recherches, innovations et articles sur la santé publique en RDC."
+        keywords="publications médicales, recherche médicale Congo, mini-revue médicale, CSEM publications, innovations santé"
+        url="https://csem-unilu.org/publications"
+        type="article"
+      />
       <Navigation />
 
       <main className="container mx-auto px-4 pt-32 pb-20">
