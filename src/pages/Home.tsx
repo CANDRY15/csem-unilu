@@ -182,7 +182,24 @@ const Home = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h2 className="text-4xl font-bold">Notre Mission</h2>
+            <div className="relative inline-block mb-4">
+              <h2 className="text-4xl md:text-5xl font-bold relative z-10 px-8">Notre Mission</h2>
+              <svg 
+                className="absolute inset-0 w-full h-full -z-0" 
+                viewBox="0 0 400 100" 
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ transform: 'scale(1.1)' }}
+              >
+                <path 
+                  d="M 10,50 Q 10,15 50,10 L 350,10 Q 390,15 390,50 Q 390,85 350,90 L 50,90 Q 10,85 10,50" 
+                  fill="none" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth="4" 
+                  strokeLinecap="round"
+                  opacity="0.8"
+                />
+              </svg>
+            </div>
             <p className="text-lg text-muted-foreground leading-relaxed">
               La Cellule Scientifique des Etudiants en Médecine est un club scientifique au sein de la Faculté de Médecine de l'Université de Lubumbashi, créé depuis 2003 par ceux qui sont aujourd'hui nos éminents professeurs, CT et assistants. Ce club est l'unique de l'UNILU qui fait partie des CLEF (Clubs Leaders des Etudiants Francophones - AUF) depuis 5 bonnes années déjà. L'objectif principal est celui de contribuer au développement du savoir, savoir-être, savoir-faire et savoir-faire-faire des carabins et des médecins, par la culture des échanges de connaissances médicales et par la recherche scientifique ; et cela s'inscrit de manière directe dans les objectifs de l'UNILU à travers la Faculté de Médecine.
             </p>
