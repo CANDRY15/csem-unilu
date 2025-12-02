@@ -16,6 +16,12 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ArticleReview from "./pages/ArticleReview";
 import MySubmissions from "./pages/MySubmissions";
+import Journal from "./pages/Journal";
+import JournalIssue from "./pages/JournalIssue";
+import JournalArticle from "./pages/JournalArticle";
+import JournalSubmit from "./pages/JournalSubmit";
+import JournalCommittee from "./pages/JournalCommittee";
+import JournalInstructions from "./pages/JournalInstructions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +46,12 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/article-review" element={<ArticleReview />} />
             <Route path="/my-submissions" element={<MySubmissions />} />
+            <Route path="/journal" element={<Journal />} />
+            <Route path="/journal/volume-:volumeNum/numero-:issueNum" element={<JournalIssue />} />
+            <Route path="/journal/article/:articleId" element={<JournalArticle />} />
+            <Route path="/journal/soumettre" element={<JournalSubmit />} />
+            <Route path="/journal/comite" element={<JournalCommittee />} />
+            <Route path="/journal/instructions" element={<JournalInstructions />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
