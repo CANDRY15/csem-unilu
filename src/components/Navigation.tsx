@@ -29,6 +29,7 @@ export const Navigation = () => {
     { name: "Accueil", path: "/" },
     { name: "Bibliothèque", path: "/library" },
     { name: "mini-revue", path: "/publications" },
+    { name: "CSEM Journal", path: "/journal" },
     { name: "Événements", path: "/events" },
     { name: "Équipe", path: "/team" },
     { name: "Contact", path: "/contact" },

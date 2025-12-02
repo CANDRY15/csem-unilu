@@ -203,6 +203,45 @@ export type Database = {
         }
         Relationships: []
       }
+      editorial_committee: {
+        Row: {
+          affiliation: string | null
+          bio: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          order_index: number | null
+          photo_url: string | null
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          affiliation?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          order_index?: number | null
+          photo_url?: string | null
+          role: string
+          updated_at?: string | null
+        }
+        Update: {
+          affiliation?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          order_index?: number | null
+          photo_url?: string | null
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       event_photos: {
         Row: {
           caption: string | null
@@ -286,6 +325,196 @@ export type Database = {
           title?: string
           type?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      journal_articles: {
+        Row: {
+          abstract: string
+          affiliations: string[] | null
+          authors: string[]
+          content: string | null
+          created_at: string | null
+          doi: string | null
+          id: string
+          issue_id: string | null
+          keywords: string[] | null
+          pages: string | null
+          pdf_url: string | null
+          publication_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          abstract: string
+          affiliations?: string[] | null
+          authors: string[]
+          content?: string | null
+          created_at?: string | null
+          doi?: string | null
+          id?: string
+          issue_id?: string | null
+          keywords?: string[] | null
+          pages?: string | null
+          pdf_url?: string | null
+          publication_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          abstract?: string
+          affiliations?: string[] | null
+          authors?: string[]
+          content?: string | null
+          created_at?: string | null
+          doi?: string | null
+          id?: string
+          issue_id?: string | null
+          keywords?: string[] | null
+          pages?: string | null
+          pdf_url?: string | null
+          publication_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_articles_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "journal_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_issues: {
+        Row: {
+          cover_image: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          issue_number: number
+          pdf_url: string | null
+          publication_date: string
+          title: string
+          updated_at: string | null
+          volume_id: string
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          issue_number: number
+          pdf_url?: string | null
+          publication_date: string
+          title: string
+          updated_at?: string | null
+          volume_id: string
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          issue_number?: number
+          pdf_url?: string | null
+          publication_date?: string
+          title?: string
+          updated_at?: string | null
+          volume_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_issues_volume_id_fkey"
+            columns: ["volume_id"]
+            isOneToOne: false
+            referencedRelation: "journal_volumes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_submissions: {
+        Row: {
+          abstract: string
+          affiliation: string
+          certified_original: boolean | null
+          email: string
+          file_url: string
+          full_name: string
+          id: string
+          keywords: string[] | null
+          reviewer_notes: string | null
+          status: string | null
+          submission_date: string | null
+          submitter_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          abstract: string
+          affiliation: string
+          certified_original?: boolean | null
+          email: string
+          file_url: string
+          full_name: string
+          id?: string
+          keywords?: string[] | null
+          reviewer_notes?: string | null
+          status?: string | null
+          submission_date?: string | null
+          submitter_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          abstract?: string
+          affiliation?: string
+          certified_original?: boolean | null
+          email?: string
+          file_url?: string
+          full_name?: string
+          id?: string
+          keywords?: string[] | null
+          reviewer_notes?: string | null
+          status?: string | null
+          submission_date?: string | null
+          submitter_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      journal_volumes: {
+        Row: {
+          cover_image: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          title: string
+          updated_at: string | null
+          volume_number: number
+          year: number
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          title: string
+          updated_at?: string | null
+          volume_number: number
+          year: number
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          title?: string
+          updated_at?: string | null
+          volume_number?: number
+          year?: number
         }
         Relationships: []
       }
