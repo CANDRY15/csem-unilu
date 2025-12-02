@@ -183,15 +183,15 @@ const Home = () => {
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <div className="relative inline-block mb-4">
-              <h2 className="text-4xl md:text-5xl font-bold relative z-10 px-8">Notre Mission</h2>
+              <h2 className="text-4xl md:text-5xl font-bold relative z-10 px-8">Qui sommes-nous</h2>
               <svg 
                 className="absolute inset-0 w-full h-full -z-0" 
-                viewBox="0 0 400 100" 
+                viewBox="0 0 450 100" 
                 xmlns="http://www.w3.org/2000/svg"
                 style={{ transform: 'scale(1.1)' }}
               >
                 <path 
-                  d="M 10,50 Q 10,15 50,10 L 350,10 Q 390,15 390,50 Q 390,85 350,90 L 50,90 Q 10,85 10,50" 
+                  d="M 10,50 Q 10,15 50,10 L 400,10 Q 440,15 440,50 Q 440,85 400,90 L 50,90 Q 10,85 10,50" 
                   fill="none" 
                   stroke="hsl(var(--primary))" 
                   strokeWidth="4" 
