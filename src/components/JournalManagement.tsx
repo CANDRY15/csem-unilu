@@ -102,7 +102,7 @@ export default function JournalManagement() {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) return;
 
     try {
-      const { error } = await supabase.from(table).delete().eq("id", id);
+      const { error } = await supabase.from(table as any).delete().eq("id", id);
       if (error) throw error;
 
       toast({
