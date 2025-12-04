@@ -7,7 +7,9 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, ArrowLeft, ExternalLink } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Download, ArrowLeft, ExternalLink, Calendar, User, BookOpen, FileText, Share2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function JournalArticle() {
@@ -43,11 +45,18 @@ export default function JournalArticle() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen container mx-auto px-4 py-12 max-w-4xl">
-          <Skeleton className="h-12 w-3/4 mb-4" />
-          <Skeleton className="h-6 w-1/2 mb-8" />
-          <Skeleton className="h-48 w-full mb-4" />
-          <Skeleton className="h-32 w-full" />
+        <div className="min-h-screen bg-background">
+          <div className="bg-primary text-primary-foreground py-6">
+            <div className="container mx-auto px-4">
+              <Skeleton className="h-8 w-64 bg-primary-foreground/20" />
+            </div>
+          </div>
+          <div className="container mx-auto px-4 py-8 max-w-4xl">
+            <Skeleton className="h-10 w-3/4 mb-4" />
+            <Skeleton className="h-6 w-1/2 mb-8" />
+            <Skeleton className="h-48 w-full mb-4" />
+            <Skeleton className="h-32 w-full" />
+          </div>
         </div>
         <Footer />
       </>
@@ -58,14 +67,22 @@ export default function JournalArticle() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen container mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl font-bold mb-4">Article non trouvé</h1>
-          <Link to="/journal">
-            <Button>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour à la revue
-            </Button>
-          </Link>
+        <div className="min-h-screen bg-background">
+          <div className="bg-primary text-primary-foreground py-6">
+            <div className="container mx-auto px-4">
+              <h1 className="text-2xl font-bold">CSEM JOURNAL</h1>
+            </div>
+          </div>
+          <div className="container mx-auto px-4 py-12 text-center">
+            <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-4">Article non trouvé</h2>
+            <Link to="/journal">
+              <Button>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Retour à la revue
+              </Button>
+            </Link>
+          </div>
         </div>
         <Footer />
       </>
@@ -133,54 +150,71 @@ export default function JournalArticle() {
         </script>
       </Helmet>
       
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navigation />
         
-        <main className="flex-grow container mx-auto px-4 py-12 max-w-4xl">
-          <Link to={issue ? `/journal/volume-${volume?.volume_number}/numero-${issue.issue_number}` : "/journal"}>
-            <Button variant="ghost" className="mb-6">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+        {/* Header */}
+        <div className="bg-primary text-primary-foreground py-6">
+          <div className="container mx-auto px-4">
+            <Link 
+              to={issue ? `/journal/volume-${volume?.volume_number}/numero-${issue.issue_number}` : "/journal"}
+              className="inline-flex items-center text-primary-foreground/80 hover:text-primary-foreground mb-3 text-sm"
+            >
+              <ArrowLeft className="mr-1 h-4 w-4" />
               Retour au numéro
-            </Button>
-          </Link>
+            </Link>
+            <p className="text-primary-foreground/80 text-sm">
+              CSEM Journal • Volume {volume?.volume_number} • Numéro {issue?.issue_number}
+            </p>
+          </div>
+        </div>
 
+        <main className="flex-grow container mx-auto px-4 py-8 max-w-4xl">
           <article className="space-y-6">
             {/* Article Header */}
             <div className="space-y-4">
-              {issue && volume && (
-                <p className="text-sm text-muted-foreground">
-                  CSEM Journal • Volume {volume.volume_number} • Numéro {issue.issue_number}
-                </p>
-              )}
+              <Badge>Recherche</Badge>
               
-              <h1 className="text-4xl font-bold leading-tight text-primary">
+              <h1 className="text-3xl md:text-4xl font-bold leading-tight text-foreground">
                 {article.title}
               </h1>
               
+              {/* Authors */}
               <div className="space-y-2">
-                <p className="text-lg font-medium">
-                  {article.authors.join(", ")}
-                </p>
+                <div className="flex items-start gap-2">
+                  <User className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
+                  <p className="text-base font-medium">
+                    {article.authors.join(", ")}
+                  </p>
+                </div>
                 {article.affiliations && article.affiliations.length > 0 && (
-                  <p className="text-sm text-muted-foreground italic">
+                  <p className="text-sm text-muted-foreground italic pl-6">
                     {article.affiliations.join("; ")}
                   </p>
                 )}
               </div>
 
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span>
-                  Publié le {new Date(article.publication_date).toLocaleDateString('fr-FR', {
+              {/* Meta info */}
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-4 h-4" />
+                  {new Date(article.publication_date).toLocaleDateString('fr-FR', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })}
                 </span>
-                {article.pages && <span>• Pages {article.pages}</span>}
+                {article.pages && (
+                  <span className="flex items-center gap-1">
+                    <BookOpen className="w-4 h-4" />
+                    Pages {article.pages}
+                  </span>
+                )}
               </div>
 
+              {/* DOI */}
               {article.doi && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
                   <span className="text-sm font-medium">DOI:</span>
                   <a
                     href={`https://doi.org/${article.doi}`}
@@ -194,41 +228,44 @@ export default function JournalArticle() {
                 </div>
               )}
 
-              {article.pdf_url && (
-                <Button asChild>
-                  <a href={article.pdf_url} target="_blank" rel="noopener noreferrer">
-                    <Download className="mr-2 h-4 w-4" />
-                    Télécharger l'article (PDF)
-                  </a>
+              {/* Actions */}
+              <div className="flex flex-wrap gap-3">
+                {article.pdf_url && (
+                  <Button asChild>
+                    <a href={article.pdf_url} target="_blank" rel="noopener noreferrer">
+                      <Download className="mr-2 h-4 w-4" />
+                      Télécharger PDF
+                    </a>
+                  </Button>
+                )}
+                <Button variant="outline" size="icon" title="Partager">
+                  <Share2 className="h-4 w-4" />
                 </Button>
-              )}
+              </div>
             </div>
+
+            <Separator />
 
             {/* Keywords */}
             {article.keywords && article.keywords.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Mots-clés</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {article.keywords.map((keyword: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
-                      >
-                        {keyword}
-                      </span>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <div>
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                  Mots-clés
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {article.keywords.map((keyword: string, idx: number) => (
+                    <Badge key={idx} variant="secondary">
+                      {keyword}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Abstract */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Résumé</CardTitle>
+            <Card className="border-l-4 border-l-primary">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Résumé</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -240,8 +277,8 @@ export default function JournalArticle() {
             {/* Content */}
             {article.content && (
               <Card>
-                <CardHeader>
-                  <CardTitle>Texte intégral</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Texte intégral</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -250,6 +287,21 @@ export default function JournalArticle() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Citation */}
+            <Card className="bg-secondary/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                  Comment citer cet article
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  {article.authors.join(", ")}. {article.title}. <em>CSEM Journal</em>. {volume?.year};{volume?.volume_number}({issue?.issue_number}):{article.pages || "xx-xx"}.
+                  {article.doi && ` doi: ${article.doi}`}
+                </p>
+              </CardContent>
+            </Card>
           </article>
         </main>
 
