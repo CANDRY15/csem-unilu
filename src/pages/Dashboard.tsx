@@ -22,6 +22,8 @@ import { DepartmentMembersManagement } from "@/components/DepartmentMembersManag
 import { LibraryManagement } from "@/components/LibraryManagement";
 import { PublicationManagement } from "@/components/PublicationManagement";
 import { EventsManagement } from "@/components/EventsManagement";
+import { JournalManagement } from "@/components/JournalManagement";
+import { BookOpen } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -84,6 +86,10 @@ const Dashboard = () => {
                   <Calendar className="h-4 w-4 mr-2" />
                   Événements
                 </TabsTrigger>
+                <TabsTrigger value="journal">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  CSEM Journal
+                </TabsTrigger>
               </>
             )}
           </TabsList>
@@ -108,6 +114,10 @@ const Dashboard = () => {
               
               <TabsContent value="events">
                 <EventsManagement />
+              </TabsContent>
+
+              <TabsContent value="journal">
+                <JournalManagement />
               </TabsContent>
             </>
           )}
