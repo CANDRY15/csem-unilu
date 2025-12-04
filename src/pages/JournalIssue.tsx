@@ -4,9 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { FileText, Download, ArrowLeft, Calendar, User, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function JournalIssue() {
@@ -57,13 +58,19 @@ export default function JournalIssue() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen container mx-auto px-4 py-12">
-          <Skeleton className="h-12 w-3/4 mb-4" />
-          <Skeleton className="h-6 w-1/2 mb-8" />
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-32 w-full" />
-            ))}
+        <div className="min-h-screen bg-background">
+          <div className="bg-primary text-primary-foreground py-6">
+            <div className="container mx-auto px-4">
+              <Skeleton className="h-8 w-64 bg-primary-foreground/20" />
+            </div>
+          </div>
+          <div className="container mx-auto px-4 py-8">
+            <Skeleton className="h-6 w-48 mb-4" />
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-32 w-full" />
+              ))}
+            </div>
           </div>
         </div>
         <Footer />
@@ -75,14 +82,22 @@ export default function JournalIssue() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen container mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl font-bold mb-4">Numéro non trouvé</h1>
-          <Link to="/journal">
-            <Button>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour à la revue
-            </Button>
-          </Link>
+        <div className="min-h-screen bg-background">
+          <div className="bg-primary text-primary-foreground py-6">
+            <div className="container mx-auto px-4">
+              <h1 className="text-2xl font-bold">CSEM JOURNAL</h1>
+            </div>
+          </div>
+          <div className="container mx-auto px-4 py-12 text-center">
+            <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-4">Numéro non trouvé</h2>
+            <Link to="/journal">
+              <Button>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Retour à la revue
+              </Button>
+            </Link>
+          </div>
         </div>
         <Footer />
       </>
@@ -96,105 +111,149 @@ export default function JournalIssue() {
         description={issue.description || `Numéro ${issueNumber} du volume ${volumeNumber} de la revue scientifique CSEM`}
         keywords="CSEM journal, revue scientifique, publications médicales"
       />
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navigation />
         
-        <main className="flex-grow container mx-auto px-4 py-12">
-          <Link to="/journal">
-            <Button variant="ghost" className="mb-6">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+        {/* Header */}
+        <div className="bg-primary text-primary-foreground py-6">
+          <div className="container mx-auto px-4">
+            <Link to="/journal" className="inline-flex items-center text-primary-foreground/80 hover:text-primary-foreground mb-3 text-sm">
+              <ArrowLeft className="mr-1 h-4 w-4" />
               Retour à la revue
-            </Button>
-          </Link>
+            </Link>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-primary-foreground/80 text-sm mb-1">
+                  Volume {volumeNumber} • Numéro {issueNumber}
+                </p>
+                <h1 className="text-2xl md:text-3xl font-bold">
+                  {issue.title}
+                </h1>
+                <p className="text-primary-foreground/80 text-sm mt-2 flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  {new Date(issue.publication_date).toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+              </div>
+              {issue.pdf_url && (
+                <Button variant="secondary" size="sm" asChild className="shrink-0">
+                  <a href={issue.pdf_url} target="_blank" rel="noopener noreferrer">
+                    <Download className="mr-2 h-4 w-4" />
+                    PDF Complet
+                  </a>
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
 
-          {/* Issue Header */}
-          <div className="mb-8">
-            <p className="text-sm text-muted-foreground mb-2">
-              Volume {volumeNumber} • Numéro {issueNumber}
-            </p>
-            <h1 className="text-4xl font-bold text-primary mb-4">
-              {issue.title}
-            </h1>
-            {issue.description && (
-              <p className="text-lg text-muted-foreground mb-4">
+        {/* Description */}
+        {issue.description && (
+          <div className="border-b bg-card">
+            <div className="container mx-auto px-4 py-4">
+              <p className="text-muted-foreground">
                 {issue.description}
               </p>
-            )}
-            <p className="text-sm text-muted-foreground">
-              Publié le {new Date(issue.publication_date).toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
-            
-            {issue.pdf_url && (
-              <Button asChild className="mt-4">
-                <a href={issue.pdf_url} target="_blank" rel="noopener noreferrer">
-                  <Download className="mr-2 h-4 w-4" />
-                  Télécharger le numéro complet (PDF)
-                </a>
-              </Button>
-            )}
+            </div>
           </div>
+        )}
 
-          {/* Articles List */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Articles de ce numéro</h2>
-            
-            {issue.journal_articles && issue.journal_articles.length > 0 ? (
-              <div className="space-y-4">
-                {issue.journal_articles.map((article: any) => (
-                  <Link key={article.id} to={`/journal/article/${article.id}`}>
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
-                      <CardHeader>
-                        <CardTitle className="text-xl">{article.title}</CardTitle>
-                        <CardDescription className="text-base">
-                          {article.authors.join(", ")}
-                        </CardDescription>
-                        {article.pages && (
-                          <p className="text-sm text-muted-foreground">
-                            Pages {article.pages}
-                          </p>
-                        )}
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
-                          {article.abstract}
-                        </p>
-                        {article.keywords && article.keywords.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {article.keywords.map((keyword: string, idx: number) => (
-                              <span
-                                key={idx}
-                                className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded"
-                              >
-                                {keyword}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        {article.doi && (
-                          <p className="text-xs text-muted-foreground">
-                            DOI: {article.doi}
-                          </p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-lg text-muted-foreground">
-                    Aucun article publié dans ce numéro.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+        <main className="flex-grow container mx-auto px-4 py-8">
+          {/* Articles Count */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <span className="w-1 h-5 bg-primary rounded-full"></span>
+              Articles ({issue.journal_articles?.length || 0})
+            </h2>
           </div>
+          
+          {issue.journal_articles && issue.journal_articles.length > 0 ? (
+            <div className="space-y-4">
+              {issue.journal_articles.map((article: any, index: number) => (
+                <Link key={article.id} to={`/journal/article/${article.id}`}>
+                  <Card className="hover:shadow-lg transition-all duration-200 hover:border-primary border overflow-hidden">
+                    <CardContent className="p-0">
+                      <div className="flex">
+                        {/* Article Number */}
+                        <div className="w-16 shrink-0 bg-primary/5 flex items-center justify-center border-r">
+                          <span className="text-2xl font-bold text-primary/40">
+                            {(index + 1).toString().padStart(2, '0')}
+                          </span>
+                        </div>
+                        
+                        {/* Article Content */}
+                        <div className="flex-1 p-4">
+                          <div className="flex items-start gap-3">
+                            <Badge variant="secondary" className="shrink-0">
+                              Recherche
+                            </Badge>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-base leading-tight hover:text-primary transition-colors mb-2">
+                                {article.title}
+                              </h3>
+                              <p className="text-sm text-muted-foreground flex items-center gap-1 mb-2">
+                                <User className="w-3 h-3" />
+                                {article.authors.join(", ")}
+                              </p>
+                              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                                {article.abstract}
+                              </p>
+                              
+                              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                                {article.pages && (
+                                  <span>Pages {article.pages}</span>
+                                )}
+                                {article.doi && (
+                                  <span className="text-primary">DOI: {article.doi}</span>
+                                )}
+                                {article.pdf_url && (
+                                  <Badge variant="outline" className="text-xs">
+                                    <Download className="w-3 h-3 mr-1" />
+                                    PDF
+                                  </Badge>
+                                )}
+                              </div>
+                              
+                              {article.keywords && article.keywords.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-3">
+                                  {article.keywords.slice(0, 4).map((keyword: string, idx: number) => (
+                                    <span
+                                      key={idx}
+                                      className="text-xs bg-secondary text-secondary-foreground px-2 py-0.5 rounded"
+                                    >
+                                      {keyword}
+                                    </span>
+                                  ))}
+                                  {article.keywords.length > 4 && (
+                                    <span className="text-xs text-muted-foreground">
+                                      +{article.keywords.length - 4}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                            <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0 mt-1" />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <Card className="border-dashed">
+              <CardContent className="py-16 text-center">
+                <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-lg text-muted-foreground">
+                  Aucun article publié dans ce numéro.
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </main>
 
         <Footer />
