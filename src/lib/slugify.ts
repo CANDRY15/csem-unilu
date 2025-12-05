@@ -19,20 +19,23 @@ export function slugify(text: string): string {
  * Generate article URL path from title and ID
  * @param title - Article title
  * @param id - Article ID (for uniqueness)
- * @returns URL path like /article/titre-de-article-abc123
+ * @returns URL path like /article/titre-de-article-abc12345
  */
 export function getArticleUrl(title: string, id: string): string {
   const slug = slugify(title);
-  const shortId = id.substring(0, 8);
+  // Use first 8 chars of UUID for short ID
+  const shortId = id.replace(/-/g, '').substring(0, 8);
   return `/article/${slug}-${shortId}`;
 }
 
 /**
- * Extract article ID from slug
- * @param slug - URL slug containing title and ID
- * @returns Article ID (8 characters)
+ * Extract article ID prefix from slug
+ * @param slug - URL slug containing title and short ID
+ * @returns Short article ID prefix (8 characters without dashes)
  */
 export function extractArticleId(slug: string): string {
-  const parts = slug.split('-');
-  return parts[parts.length - 1] || '';
+  // The short ID is the last segment after the last hyphen
+  const lastDashIndex = slug.lastIndexOf('-');
+  if (lastDashIndex === -1) return slug;
+  return slug.substring(lastDashIndex + 1);
 }
