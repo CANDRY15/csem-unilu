@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { BookOpen, FileText, Users, Calendar, ChevronRight, Download, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getArticleUrl } from "@/lib/slugify";
 
 export default function Journal() {
   // Fetch volumes with issues
@@ -169,7 +170,7 @@ export default function Journal() {
                     const issue = article.journal_issues;
                     const volume = issue?.journal_volumes;
                     return (
-                      <Link key={article.id} to={`/journal/article/${article.id}`}>
+                      <Link key={article.id} to={getArticleUrl(article.title, article.id)}>
                         <Card className="h-full overflow-hidden group hover:shadow-lg transition-all duration-300 border-0 bg-card">
                           {/* Category Header */}
                           <div className="bg-primary text-primary-foreground px-3 py-2 text-sm font-medium">
@@ -231,7 +232,7 @@ export default function Journal() {
                       const issue = article.journal_issues;
                       const volume = issue?.journal_volumes;
                       return (
-                        <Link key={article.id} to={`/journal/article/${article.id}`}>
+                        <Link key={article.id} to={getArticleUrl(article.title, article.id)}>
                           <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/50 border">
                             <CardContent className="p-4">
                               <div className="flex gap-3">

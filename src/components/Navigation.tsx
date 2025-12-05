@@ -33,7 +33,6 @@ export const Navigation = () => {
     { name: "Événements", path: "/events" },
     { name: "Équipe", path: "/team" },
     { name: "Contact", path: "/contact" },
-    { name: "Soumettre un article", path: "/article-review" },
   ];
 
   return (
