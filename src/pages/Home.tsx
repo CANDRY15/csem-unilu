@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Calendar, Users, Microscope, GraduationCap, Award, Download } from "lucide-react";
+import { BookOpen, Calendar, Users, Microscope, GraduationCap, Award, Download, FileText, Newspaper } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -89,10 +89,16 @@ const Home = () => {
       link: "/library",
     },
     {
-      icon: Microscope,
-      title: "Publications Scientifiques",
-      description: "Découvrez les dernières recherches et innovations de nos étudiants",
+      icon: FileText,
+      title: "TFC/Mémoires",
+      description: "Découvrez les travaux de fin de cycle et mémoires de nos étudiants",
       link: "/publications",
+    },
+    {
+      icon: Newspaper,
+      title: "CSEM Journal",
+      description: "Notre revue scientifique avec des articles revus par les pairs",
+      link: "/journal",
     },
     {
       icon: Calendar,
@@ -153,11 +159,63 @@ const Home = () => {
               </Link>
               <Link to="/publications">
                 <Button variant="outline" size="lg" className="text-lg">
-                  <Microscope className="mr-2 h-5 w-5" />
-                  Nos Publications
+                  <FileText className="mr-2 h-5 w-5" />
+                  TFC/Mémoires
                 </Button>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Access Section - Mobile Optimized */}
+      <section className="py-8 px-4 bg-card/50 border-b border-border">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <Link to="/library" className="group">
+              <Card className="h-full hover:shadow-brand transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                <CardContent className="p-4 md:p-6 flex flex-col items-center text-center space-y-2 md:space-y-3">
+                  <div className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <BookOpen className="h-6 w-6 md:h-7 md:w-7 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-sm md:text-base">Bibliothèque</h3>
+                  <p className="text-xs text-muted-foreground hidden md:block">Cours, TP, Thèses</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/publications" className="group">
+              <Card className="h-full hover:shadow-brand transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
+                <CardContent className="p-4 md:p-6 flex flex-col items-center text-center space-y-2 md:space-y-3">
+                  <div className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                    <FileText className="h-6 w-6 md:h-7 md:w-7 text-secondary" />
+                  </div>
+                  <h3 className="font-semibold text-sm md:text-base">TFC/Mémoires</h3>
+                  <p className="text-xs text-muted-foreground hidden md:block">Publications étudiantes</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/journal" className="group">
+              <Card className="h-full hover:shadow-brand transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
+                <CardContent className="p-4 md:p-6 flex flex-col items-center text-center space-y-2 md:space-y-3">
+                  <div className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                    <Newspaper className="h-6 w-6 md:h-7 md:w-7 text-accent" />
+                  </div>
+                  <h3 className="font-semibold text-sm md:text-base">CSEM Journal</h3>
+                  <p className="text-xs text-muted-foreground hidden md:block">Revue scientifique</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/team" className="group">
+              <Card className="h-full hover:shadow-brand transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 border-border">
+                <CardContent className="p-4 md:p-6 flex flex-col items-center text-center space-y-2 md:space-y-3">
+                  <div className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-muted flex items-center justify-center group-hover:bg-muted/80 transition-colors">
+                    <Users className="h-6 w-6 md:h-7 md:w-7 text-foreground" />
+                  </div>
+                  <h3 className="font-semibold text-sm md:text-base">Équipe</h3>
+                  <p className="text-xs text-muted-foreground hidden md:block">Comité & Départements</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
@@ -204,16 +262,16 @@ const Home = () => {
               Découvrez tout ce que le CSEM offre à ses membres
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             {features.map((feature, index) => (
               <Link key={index} to={feature.link}>
                 <Card className="h-full hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
-                  <CardContent className="p-6 space-y-4">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                      <feature.icon className="h-6 w-6 text-primary-foreground" />
+                  <CardContent className="p-4 md:p-6 space-y-3 md:space-y-4">
+                    <div className="h-10 w-10 md:h-12 md:w-12 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                      <feature.icon className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground" />
                     </div>
-                    <h3 className="text-xl font-semibold">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
+                    <h3 className="text-base md:text-xl font-semibold">{feature.title}</h3>
+                    <p className="text-xs md:text-sm text-muted-foreground hidden md:block">{feature.description}</p>
                   </CardContent>
                 </Card>
               </Link>
