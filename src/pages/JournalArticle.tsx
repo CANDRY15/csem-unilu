@@ -11,13 +11,18 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Download, ArrowLeft, ExternalLink, Calendar, User, BookOpen, FileText, Share2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { extractArticleId } from "@/lib/slugify";
 
 export default function JournalArticle() {
-  const { articleId } = useParams<{ articleId: string }>();
+  const { slug } = useParams<{ slug: string }>();
+  
+  // Extract article ID from slug (last 8 characters after final hyphen)
+  const articleId = slug ? extractArticleId(slug) : '';
 
   const { data: article, isLoading } = useQuery({
     queryKey: ["journal-article", articleId],
     queryFn: async () => {
+      // Search by ID starting with the extracted ID
       const { data, error } = await supabase
         .from("journal_articles")
         .select(`
@@ -33,12 +38,13 @@ export default function JournalArticle() {
             )
           )
         `)
-        .eq("id", articleId)
+        .ilike("id", `${articleId}%`)
         .single();
       
       if (error) throw error;
       return data;
     },
+    enabled: !!articleId,
   });
 
   if (isLoading) {

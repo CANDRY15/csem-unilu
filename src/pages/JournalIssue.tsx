@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, ArrowLeft, Calendar, User, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getArticleUrl } from "@/lib/slugify";
 
 export default function JournalIssue() {
   const { volumeNum, issueNum } = useParams<{ volumeNum: string; issueNum: string }>();
@@ -173,7 +174,7 @@ export default function JournalIssue() {
           {issue.journal_articles && issue.journal_articles.length > 0 ? (
             <div className="space-y-4">
               {issue.journal_articles.map((article: any, index: number) => (
-                <Link key={article.id} to={`/journal/article/${article.id}`}>
+                <Link key={article.id} to={getArticleUrl(article.title, article.id)}>
                   <Card className="hover:shadow-lg transition-all duration-200 hover:border-primary border overflow-hidden">
                     <CardContent className="p-0">
                       <div className="flex">
