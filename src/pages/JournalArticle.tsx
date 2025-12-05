@@ -22,7 +22,7 @@ export default function JournalArticle() {
   const { data: article, isLoading } = useQuery({
     queryKey: ["journal-article", articleId],
     queryFn: async () => {
-      // Search by ID starting with the extracted ID
+      // Fetch all articles and find by ID prefix (without dashes)
       const { data, error } = await supabase
         .from("journal_articles")
         .select(`
@@ -37,12 +37,13 @@ export default function JournalArticle() {
               year
             )
           )
-        `)
-        .ilike("id", `${articleId}%`)
-        .single();
+        `);
       
       if (error) throw error;
-      return data;
+      
+      // Find article where ID (without dashes) starts with the short ID
+      const found = data?.find(a => a.id.replace(/-/g, '').startsWith(articleId));
+      return found || null;
     },
     enabled: !!articleId,
   });
