@@ -15,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
-import { Loader2, Plus, Edit, Trash2, FileText, Users, Calendar } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, FileText, Users, Calendar, BookOpen } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { OrganizationManagement } from "@/components/OrganizationManagement";
 import { DepartmentMembersManagement } from "@/components/DepartmentMembersManagement";
@@ -23,7 +23,7 @@ import { LibraryManagement } from "@/components/LibraryManagement";
 import { PublicationManagement } from "@/components/PublicationManagement";
 import { EventsManagement } from "@/components/EventsManagement";
 import { JournalManagement } from "@/components/JournalManagement";
-import { BookOpen } from "lucide-react";
+import { ArticleSubmissionForm } from "@/components/ArticleSubmissionForm";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -63,10 +63,14 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue="publications" className="space-y-6">
-          <TabsList>
+          <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="publications">
               <FileText className="h-4 w-4 mr-2" />
               Publications
+            </TabsTrigger>
+            <TabsTrigger value="submit-article">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Soumettre Article
             </TabsTrigger>
             {isAdmin && (
               <>
@@ -96,6 +100,10 @@ const Dashboard = () => {
 
           <TabsContent value="publications" className="space-y-6">
             <PublicationManagement />
+          </TabsContent>
+
+          <TabsContent value="submit-article" className="space-y-6">
+            <ArticleSubmissionForm userId={user?.id || ""} userEmail={user?.email || ""} />
           </TabsContent>
 
           {isAdmin && (

@@ -49,6 +49,7 @@ const App = () => (
             <Route path="/article-review" element={<ArticleReview />} />
             <Route path="/my-submissions" element={<MySubmissions />} />
             <Route path="/journal" element={<Journal />} />
+            <Route path="/revue/volume-:volumeNum/numero-:issueNum" element={<JournalIssue />} />
             <Route path="/journal/volume-:volumeNum/numero-:issueNum" element={<JournalIssue />} />
             <Route path="/article/:slug" element={<JournalArticle />} />
             <Route path="/journal/soumettre" element={<JournalSubmit />} />
