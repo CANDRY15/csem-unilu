@@ -17,7 +17,7 @@ export default function JournalIssue() {
   const volumeNumber = parseInt(volumeNum || "0");
   const issueNumber = parseInt(issueNum || "0");
 
-  const { data: issue, isLoading } = useQuery({
+  const { data: issue, isLoading, error } = useQuery({
     queryKey: ["journal-issue", volumeNumber, issueNumber],
     queryFn: async () => {
       // First get the volume
@@ -25,9 +25,10 @@ export default function JournalIssue() {
         .from("journal_volumes")
         .select("*")
         .eq("volume_number", volumeNumber)
-        .single();
+        .maybeSingle();
       
       if (volumeError) throw volumeError;
+      if (!volume) return null;
 
       // Then get the issue with articles
       const { data, error } = await supabase
@@ -48,11 +49,14 @@ export default function JournalIssue() {
         `)
         .eq("volume_id", volume.id)
         .eq("issue_number", issueNumber)
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
+      if (!data) return null;
+      
       return { ...data, volume };
     },
+    enabled: volumeNumber > 0 && issueNumber > 0,
   });
 
   if (isLoading) {
