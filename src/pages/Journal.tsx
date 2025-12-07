@@ -312,7 +312,7 @@ export default function Journal() {
                               {volume.journal_issues.map((issue: any) => (
                                 <Link
                                   key={issue.id}
-                                  to={`/journal/volume-${volume.volume_number}/numero-${issue.issue_number}`}
+                                  to={`/revue/volume-${volume.volume_number}/numero-${issue.issue_number}`}
                                   className="flex items-center justify-between p-2 rounded-md hover:bg-secondary/50 transition-colors group"
                                 >
                                   <div className="flex items-center gap-2">
