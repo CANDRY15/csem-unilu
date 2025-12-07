@@ -70,24 +70,21 @@ export const Navigation = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <User className="mr-2 h-4 w-4" />
+                    Mon profil
+                  </DropdownMenuItem>
                   {canPublish && (
-                    <>
-                      <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Tableau de bord
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/my-submissions")}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Mes soumissions
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  {!canPublish && (
-                    <DropdownMenuItem onClick={() => navigate("/my-submissions")}>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Mes soumissions
+                    <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Tableau de bord
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem onClick={() => navigate("/my-submissions")}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Mes soumissions
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Se déconnecter
@@ -126,6 +123,12 @@ export const Navigation = () => {
             ))}
             {user ? (
               <>
+                <Link to="/profile" onClick={() => setIsOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start">
+                    <User className="mr-2 h-4 w-4" />
+                    Mon profil
+                  </Button>
+                </Link>
                 {canPublish && (
                   <Link to="/dashboard" onClick={() => setIsOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start">
@@ -134,6 +137,12 @@ export const Navigation = () => {
                     </Button>
                   </Link>
                 )}
+                <Link to="/my-submissions" onClick={() => setIsOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Mes soumissions
+                  </Button>
+                </Link>
                 <Button variant="hero" className="w-full mt-2" onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Se déconnecter

@@ -14,6 +14,7 @@ import ComiteMemberDetail from "./pages/ComiteMemberDetail";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 import ArticleReview from "./pages/ArticleReview";
 import MySubmissions from "./pages/MySubmissions";
 import Journal from "./pages/Journal";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/article-review" element={<ArticleReview />} />
             <Route path="/my-submissions" element={<MySubmissions />} />
             <Route path="/journal" element={<Journal />} />
