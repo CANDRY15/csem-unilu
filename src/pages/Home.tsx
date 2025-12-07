@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Calendar, Users, Microscope, GraduationCap, Award, Download, FileText, Newspaper } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BookOpen, Calendar, Users, Microscope, GraduationCap, Award, Download, FileText, Newspaper, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -58,6 +58,19 @@ const Home = () => {
         .select("*")
         .order("created_at", { ascending: false })
         .limit(4);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: recentArticles } = useQuery({
+    queryKey: ["recent-journal-articles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("journal_articles")
+        .select("*")
+        .order("publication_date", { ascending: false })
+        .limit(3);
       if (error) throw error;
       return data;
     },
@@ -395,6 +408,66 @@ const Home = () => {
               <CarouselPrevious />
               <CarouselNext />
             </Carousel>
+          </div>
+        </section>
+      )}
+
+      {/* Recent Journal Articles Section */}
+      {recentArticles && recentArticles.length > 0 && (
+        <section className="py-16 px-4 bg-muted/30">
+          <div className="container mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-3xl font-bold">Articles Récents</h2>
+                <p className="text-muted-foreground">Dernières publications du CSEM Journal</p>
+              </div>
+              <Link to="/journal">
+                <Button variant="outline">
+                  Voir tous les articles
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recentArticles.map((article) => (
+                <Link 
+                  key={article.id} 
+                  to={`/article/${article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}-${article.id.replace(/-/g, '').substring(0, 8)}`}
+                  className="group"
+                >
+                  <Card className="h-full hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
+                    <CardHeader>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                        <Newspaper className="h-4 w-4 text-primary" />
+                        <span>CSEM Journal</span>
+                        <span>•</span>
+                        <span>{new Date(article.publication_date).toLocaleDateString('fr-FR')}</span>
+                      </div>
+                      <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                        {article.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+                        {article.abstract}
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {article.authors?.slice(0, 2).map((author, idx) => (
+                          <span key={idx} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                            {author}
+                          </span>
+                        ))}
+                        {article.authors && article.authors.length > 2 && (
+                          <span className="text-xs text-muted-foreground px-2 py-1">
+                            +{article.authors.length - 2}
+                          </span>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}
